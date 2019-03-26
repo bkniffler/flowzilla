@@ -22,6 +22,36 @@ test('basic', async () => {
   expect(result.length).toBe(4);
 });
 
+test('context', async () => {
+  const dog = new ServiceDog();
+  dog.train((type, value, flow) => {
+    flow.set('1', 1);
+    flow.set('2', 2);
+    flow(value);
+  });
+  dog.train((type, value, flow) => {
+    flow(
+      [...value, flow.get('1'), flow.get('2')].reduce(
+        (result, num) => result + num
+      )
+    );
+  });
+  const result = await dog.send<any>('context', [0], {});
+  expect(result).toBe(3);
+});
+
+test('tracker', async () => {
+  const dog = new ServiceDog();
+  dog.train((type, value, flow) => {
+    flow(value);
+  });
+  const tracker: [string, string, any][] = [];
+  await dog.send<any>('context', [0], {
+    tracker: (x, y, z) => tracker.push([x, y, z])
+  });
+  expect(tracker.length).toBe(3);
+});
+
 test('resend', async () => {
   const dog = new ServiceDog();
   dog.train((type, value, flow) => {
