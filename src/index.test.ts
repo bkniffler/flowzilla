@@ -55,10 +55,10 @@ test('tracker', async () => {
 test('edgecase', async () => {
   const dog = createServiceDog();
   dog.train('1', (type, value, flow) => {
-    flow(value);
+    (flow as any)();
   });
   dog.train('1', (type, value, flow) => {
-    flow(value);
+    (flow as any)();
   });
   expect(() => (dog.train as any)()).toThrow();
   expect(dog.numberOfSkills()).toBe(1);

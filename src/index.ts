@@ -75,7 +75,7 @@ interface IOptions {
 }
 function dispatch(
   callback: Function | undefined,
-  skills: ISkill<any>[] = [],
+  skills: ISkill<any>[],
   type: string,
   value: any,
   options: IOptions = {}
