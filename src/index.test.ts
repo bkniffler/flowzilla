@@ -81,6 +81,22 @@ test('resend', async () => {
   expect('hello').toBe(result);
 });
 
+test('restart', async () => {
+  const dog = new ServiceDog();
+  dog.train((type, value, flow) => {
+    if (type === 'first') {
+      flow.restart('second', value);
+    } else {
+      flow('hel');
+    }
+  });
+  dog.train(async (type, value, flow) => {
+    flow(`${value}`);
+  });
+  const result = await dog.send<any>('first', [0]);
+  expect('hel').toBe(result);
+});
+
 test('sync', async () => {
   const dog = new ServiceDog();
   dog.train((type, value) => {
