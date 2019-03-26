@@ -92,6 +92,12 @@ test('resend', async () => {
 test('restart', async () => {
   const dog = new ServiceDog();
   dog.train((type, value, flow) => {
+    flow(
+      value,
+      (v, n) => n(v)
+    );
+  });
+  dog.train((type, value, flow) => {
     if (type === 'first') {
       flow.restart('second', value);
     } else {
@@ -105,7 +111,7 @@ test('restart', async () => {
   const result = await dog.send<any>('first', [0], {
     tracker: (x, y, z) => tracker.push([x, y, z])
   });
-  expect(tracker.length).toBe(6);
+  expect(tracker.length).toBe(10);
   expect('hel').toBe(result);
 });
 
