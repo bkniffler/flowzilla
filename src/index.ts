@@ -79,11 +79,11 @@ function dispatch(
     return context[key] !== undefined ? context[key] : defaultValue;
   }
   if (options.tracker) {
-    if (context.$return) {
+    if (options.$return) {
       options.tracker('$return', type, value);
-    } else if (context.$restart) {
+    } else if (options.$restart) {
       options.tracker('$restart', type, value);
-    } else if (context.$nested) {
+    } else if (options.$nested) {
       options.tracker('$nested', type, value);
     } else {
       options.tracker('$start', type, value);
@@ -144,7 +144,7 @@ function dispatch(
     if (options.tracker) {
       options.tracker(skillName, type, value);
     }
-    if (context.$return) {
+    if (options.$return) {
       return (skill as any)(value, flow);
     } else {
       return skill(type, value, flow);
