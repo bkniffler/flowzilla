@@ -1,4 +1,9 @@
 <div align="center">
+  <a href="https://github.com/bkniffler/service-dog">
+    <img alt="alpacka" src="https://raw.githubusercontent.com/bkniffler/service-dog/master/assets/logo.png" height="250px" />
+  </a>
+</div>
+<div align="center">
   <h2>service-dog</h2>
   <strong>Teach your service-dogs whatever skill it needs and let it handle your requests.</strong>
   <br />
