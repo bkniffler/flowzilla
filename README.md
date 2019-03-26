@@ -4,7 +4,6 @@
   </a>
 </div>
 <div align="center">
-  <h2>service-dog</h2>
   <strong>Teach your service-dogs whatever skill it needs and let it handle your requests.</strong>
   <br />
   <br />
@@ -27,6 +26,7 @@
   <br />
 </div>
 
+# service-dog
 As soon as you send an action, service-dog will run through all of its skills, mutating the action's value along until it is done. Each skill can also hook into the return chain to modify the value again. The executional interface to service-dog is based on promises, though internally, due to performance and flexibility, service-dog uses callbacks. Thus, it can easily handle async stuff like http requests, image transformation, etc.
 
 Service-dog is based a lot on the idea of middlewares (made popular by expressjs) but is completely agnostic to what kind of operations it handles.
