@@ -1,4 +1,4 @@
-import { ServiceDog } from './index';
+import { ServiceDog, createServiceDog } from './index';
 
 test('basic', async () => {
   const dog = new ServiceDog();
@@ -50,6 +50,18 @@ test('tracker', async () => {
     tracker: (x, y, z) => tracker.push([x, y, z])
   });
   expect(tracker.length).toBe(3);
+});
+
+test('tracker', async () => {
+  const dog = createServiceDog();
+  dog.train('1', (type, value, flow) => {
+    flow(value);
+  });
+  dog.train('1', (type, value, flow) => {
+    flow(value);
+  });
+  expect(() => (dog.train as any)()).toThrow();
+  expect(dog.numberOfSkills()).toBe(1);
 });
 
 test('resend', async () => {

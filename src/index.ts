@@ -22,6 +22,9 @@ export class ServiceDog<T1 = any> {
   constructor(name = 'chappie') {
     this.name = name;
   }
+  public numberOfSkills() {
+    return this.skills.length;
+  }
   send<T>(type: string, value?: T1, options?: IOptions) {
     return new Promise<T>(yay => {
       return dispatch(yay, this.skills, type, value, options);
@@ -43,12 +46,15 @@ export class ServiceDog<T1 = any> {
     if (!skill) {
       throw new Error('Please provide skill or name+skill');
     }
+    skill['$name'] = name || skill.name || `skill${this.skills.length}`;
     // Is already learned?
-    if (this.skillsDup.indexOf(skill) !== -1) {
+    if (
+      this.skillsDup.indexOf(skill) !== -1 ||
+      this.skills.find(x => x['$name'] === (skill as any)['$name'])
+    ) {
       return;
     }
     this.skillsDup.push(skill);
-    skill['$name'] = name || skill.name || `skill${this.skills.length}`;
     this.skills.push(skill);
   }
 }
