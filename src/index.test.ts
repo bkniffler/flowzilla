@@ -31,13 +31,13 @@ test('context', async () => {
   });
   dog.train((type, value, flow) => {
     flow(
-      [...value, flow.get('1'), flow.get('2')].reduce(
+      [...value, flow.get('1'), flow.get('2'), flow.get('3', 3)].reduce(
         (result, num) => result + num
       )
     );
   });
   const result = await dog.send<any>('context', [0], {});
-  expect(result).toBe(3);
+  expect(result).toBe(6);
 });
 
 test('tracker', async () => {
@@ -52,7 +52,7 @@ test('tracker', async () => {
   expect(tracker.length).toBe(3);
 });
 
-test('tracker', async () => {
+test('edgecase', async () => {
   const dog = createServiceDog();
   dog.train('1', (type, value, flow) => {
     flow(value);
@@ -77,7 +77,11 @@ test('resend', async () => {
     const part = await flow.send('second');
     flow(`${value}${part}`);
   });
-  const result = await dog.send<any>('first', [0]);
+  const tracker: [string, string, any][] = [];
+  const result = await dog.send<any>('first', [0], {
+    tracker: (x, y, z) => tracker.push([x, y, z])
+  });
+  expect(tracker.length).toBe(7);
   expect('hello').toBe(result);
 });
 
@@ -93,7 +97,11 @@ test('restart', async () => {
   dog.train(async (type, value, flow) => {
     flow(`${value}`);
   });
-  const result = await dog.send<any>('first', [0]);
+  const tracker: [string, string, any][] = [];
+  const result = await dog.send<any>('first', [0], {
+    tracker: (x, y, z) => tracker.push([x, y, z])
+  });
+  expect(tracker.length).toBe(6);
   expect('hel').toBe(result);
 });
 

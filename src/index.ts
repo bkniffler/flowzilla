@@ -30,8 +30,8 @@ export class ServiceDog<T1 = any> {
       return dispatch(yay, this.skills, type, value, options);
     });
   }
-  sendSync(type: string, value?: T1, context: any = {}) {
-    return dispatch(undefined, this.skills, type, value, context);
+  sendSync(type: string, value?: T1, options?: IOptions) {
+    return dispatch(undefined, this.skills, type, value, options);
   }
   train<T = any>(skill: ISkill<T>): void;
   train<T = any>(name: string, skill: ISkill<T>): void;
@@ -46,11 +46,13 @@ export class ServiceDog<T1 = any> {
     if (!skill) {
       throw new Error('Please provide skill or name+skill');
     }
-    skill['$name'] = name || skill.name || `skill${this.skills.length}`;
+    skill[constants.NAME] = name || skill.name || `skill${this.skills.length}`;
     // Is already learned?
     if (
       this.skillsDup.indexOf(skill) !== -1 ||
-      this.skills.find(x => x['$name'] === (skill as any)['$name'])
+      this.skills.find(
+        x => x[constants.NAME] === (skill as any)[constants.NAME]
+      )
     ) {
       return;
     }
@@ -59,6 +61,14 @@ export class ServiceDog<T1 = any> {
   }
 }
 
+const constants = {
+  NAME: '$name',
+  RETURN: '$return',
+  RESTART: '$restart',
+  NESTED: '$nested',
+  START: '$start',
+  FINISH: '$finish'
+};
 interface IOptions {
   tracker?: ITracker;
   [s: string]: any;
@@ -79,14 +89,14 @@ function dispatch(
     return context[key] !== undefined ? context[key] : defaultValue;
   }
   if (options.tracker) {
-    if (options.$return) {
-      options.tracker('$return', type, value);
-    } else if (options.$restart) {
-      options.tracker('$restart', type, value);
-    } else if (options.$nested) {
-      options.tracker('$nested', type, value);
+    if (options[constants.RETURN]) {
+      options.tracker(constants.RETURN, type, value);
+    } else if (options[constants.RESTART]) {
+      options.tracker('', type, value);
+    } else if (options[constants.NESTED]) {
+      options.tracker(constants.NESTED, type, value);
     } else {
-      options.tracker('$start', type, value);
+      options.tracker(constants.START, type, value);
     }
   }
   function useSkill(value: any, i = 0): any {
@@ -96,12 +106,12 @@ function dispatch(
         // Afterwares present, go for them
         return dispatch(callback, nextFlows, type, value, {
           ...context,
-          $return: true
+          [constants.RETURN]: true
         });
       } else if (callback) {
         // Finish
         if (options.tracker) {
-          options.tracker('$finish', type, value);
+          options.tracker(constants.FINISH, type, value);
         }
         return callback(value);
       }
@@ -110,8 +120,8 @@ function dispatch(
       return dispatch(callback, skills, type, value, {
         ...options,
         ...con,
-        $return: undefined,
-        $restart: true
+        [constants.RETURN]: undefined,
+        [constants.RESTART]: true
       });
     }
     function flowSend<T>(type: string, value: any, con: any = {}) {
@@ -119,18 +129,18 @@ function dispatch(
         return dispatch(yay, skills, type, value, {
           ...options,
           ...con,
-          $return: undefined,
-          $nested: true
+          [constants.RETURN]: undefined,
+          [constants.NESTED]: true
         });
       });
     }
     if (!skill) {
       return flowReturn(value);
     }
-    const skillName = skill['$name'];
+    const skillName = skill[constants.NAME];
     function flow(newValue: any, nextFlow: any) {
       if (nextFlow) {
-        nextFlow.$name = `${skillName}.${nextFlow.name || 'next'}`;
+        nextFlow[constants.NAME] = `${skillName}.${nextFlow.name || 'next'}`;
         nextFlows = [nextFlow, ...nextFlows];
       }
       value = newValue || value;
@@ -144,7 +154,7 @@ function dispatch(
     if (options.tracker) {
       options.tracker(skillName, type, value);
     }
-    if (options.$return) {
+    if (options[constants.RETURN]) {
       return (skill as any)(value, flow);
     } else {
       return skill(type, value, flow);
