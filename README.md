@@ -6,6 +6,10 @@ As soon as you send an action, service-dog will run through all of its skills, m
 
 Service-dog is based a lot on the idea of middlewares (made popular by expressjs) but is completely agnostic to what kind of operations it handles.
 
+## Docs
+- [API Documentation per Typedoc](https://bkniffler.github.io/service-dog/)
+- more to come...
+
 ## Example
 
 Just a basic example of chaining skills.
