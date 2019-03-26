@@ -60,8 +60,12 @@ test('edgecase', async () => {
   dog.train('1', (type, value, flow) => {
     (flow as any)();
   });
+  dog.train('2', (type, value, flow) => {
+    (flow as any)();
+  });
   expect(() => (dog.train as any)()).toThrow();
-  expect(dog.numberOfSkills()).toBe(1);
+  await dog.send<any>('context', [0]);
+  expect(dog.numberOfSkills()).toBe(2);
 });
 
 test('resend', async () => {
