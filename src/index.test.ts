@@ -16,6 +16,7 @@ test('array', async () => {
   const x0 = '01234';
   const start = insertToArray([1, 2, 3, 4], 0, 'START').join('');
   const end = insertToArray([0, 1, 2, 3], 4, 'END').join('');
+  const def = insertToArray([0, 1, 2, 3], 4, 'END').join('');
   const before = insertToArray([0, 1, 2, 3], 4, 'BEFORE').join('');
   const before1 = insertToArray([1, 2, 3, 4], 0, 'BEFORE', 1).join('');
   const before14 = insertToArray([1, 2, 3, 4], 0, 'BEFORE', [1, 4]).join('');
@@ -29,6 +30,7 @@ test('array', async () => {
   const after13 = insertToArray([0, 1, 2, 3], 4, 'AFTER', [1, 3]).join('');
   const after2 = insertToArray([0, 1, 2, 4], 3, 'AFTER', 2, x => x).join('');
   const after3 = insertToArray([0, 1, 2, 3], 4, 'AFTER', 3).join('');
+  expect(def).toBe(x0);
   expect(start).toBe(x0);
   expect(end).toBe(x0);
   expect(before).toBe(x0);
