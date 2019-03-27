@@ -18,10 +18,14 @@ export class ServiceDog<T1 = any> {
   public numberOfSkills() {
     return this.skills.length;
   }
-  send<T>(type: string, value?: T1, options: IOptions = {}, callback?: any) {
+  private appendTracker(options: IOptions = {}) {
     if (this.tracker && !options.tracker) {
       options.tracker = this.tracker;
     }
+    return options;
+  }
+  send<T>(type: string, value?: T1, options?: IOptions, callback?: any) {
+    options = this.appendTracker(options);
     if (callback) {
       return dispatch(callback, this.skills, type, value, options);
     }
@@ -29,10 +33,8 @@ export class ServiceDog<T1 = any> {
       return dispatch(yay, this.skills, type, value, options);
     });
   }
-  sendSync(type: string, value?: T1, options: IOptions = {}) {
-    if (this.tracker && !options.tracker) {
-      options.tracker = this.tracker;
-    }
+  sendSync(type: string, value?: T1, options?: IOptions) {
+    options = this.appendTracker(options);
     return dispatch(undefined, this.skills, type, value, options);
   }
   skill<T = any>(
