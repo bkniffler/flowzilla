@@ -50,13 +50,13 @@ export class ServiceDog<T1 = any> {
   train<T = any>(
     skill: ISkill<T> | ISkill<T>[],
     position?: IPosition,
-    otherSkill?: ISkill<any> | ISkill<T>[]
+    otherSkill?: ISkill<any> | ISkill<T>[] | string | string[]
   ): void;
   train<T = any>(
     name: string,
     skill: ISkill<T> | ISkill<T>[],
     position?: IPosition,
-    otherSkill?: ISkill<any> | ISkill<T>[]
+    otherSkill?: ISkill<any> | ISkill<T>[] | string | string[]
   ): void;
   train<T = any>(
     n: string | ISkill<T> | ISkill<T>[] | undefined,

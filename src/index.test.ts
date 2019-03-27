@@ -7,7 +7,8 @@ import {
   ServiceDog,
   createServiceDog,
   ITrackerArg,
-  treeizeTracker
+  treeizeTracker,
+  ISkill
 } from './index';
 import { insertToArray } from './utils';
 
@@ -158,6 +159,17 @@ test('context', async () => {
   expect(result).toBe(6);
 });
 
+test('callback', cb => {
+  const dog = new ServiceDog();
+  dog.train((type, value, flow) => {
+    flow(value);
+  });
+  dog.send<any>('context', [0], {}, (result: any) => {
+    expect(result[0]).toBe(0);
+    cb();
+  });
+});
+
 test('tracker', async () => {
   const dog = new ServiceDog();
   dog.train((type, value, flow) => {
@@ -168,6 +180,82 @@ test('tracker', async () => {
     tracker: x => tracker.push(x)
   });
   expect(tracker.length).toBe(3);
+});
+
+test('depending', async () => {
+  const dog = new ServiceDog();
+  const skillC: ISkill = (type, value, flow) => {
+    flow([...value, 3]);
+  };
+  const skillB: ISkill = (type, value, flow) => {
+    flow([...value, 2]);
+  };
+  const skillA: ISkill = (type, value, flow) => {
+    flow([...value, 1]);
+  };
+  // skillA['skills'] = ['skillB', skillC];
+  // skillA['position'] = 'BEFORE';
+  // dog.train(skillB);
+  dog.train([skillA, skillB, skillC]);
+  const result = await dog.send<any>('context', [0], {});
+  expect(result.join('')).toBe('0123');
+});
+
+test('depending-with-position', async () => {
+  const dog = new ServiceDog();
+  const skillC: ISkill = (type, value, flow) => {
+    flow([...value, 3]);
+  };
+  const skillB: ISkill = (type, value, flow) => {
+    flow([...value, 2]);
+  };
+  const skillA: ISkill = (type, value, flow) => {
+    flow([...value, 1]);
+  };
+  // skillA['skills'] = ['skillB', skillC];
+  // skillA['position'] = 'BEFORE';
+  dog.train([skillB, skillC]);
+  dog.train(skillA, 'BEFORE', skillB);
+  const result = await dog.send<any>('context', [0], {});
+  expect(result.join('')).toBe('0123');
+});
+
+test('depending-with-position2', async () => {
+  const dog = new ServiceDog();
+  const skillC: ISkill = (type, value, flow) => {
+    flow([...value, 3]);
+  };
+  const skillB: ISkill = (type, value, flow) => {
+    flow([...value, 2]);
+  };
+  const skillA: ISkill = (type, value, flow) => {
+    flow([...value, 1]);
+  };
+  // skillA['skills'] = ['skillB', skillC];
+  // skillA['position'] = 'BEFORE';
+  dog.train([skillA, skillC]);
+  dog.train(skillB, 'AFTER', skillA);
+  const result = await dog.send<any>('context', [0], {});
+  expect(result.join('')).toBe('0123');
+});
+
+test('depending-with-position-bystring', async () => {
+  const dog = new ServiceDog();
+  const skillC: ISkill = (type, value, flow) => {
+    flow([...value, 3]);
+  };
+  const skillB: ISkill = (type, value, flow) => {
+    flow([...value, 2]);
+  };
+  const skillA: ISkill = (type, value, flow) => {
+    flow([...value, 1]);
+  };
+  // skillA['skills'] = ['skillB', skillC];
+  // skillA['position'] = 'BEFORE';
+  dog.train([skillA, skillC]);
+  dog.train(skillB, 'AFTER', ['skillA']);
+  const result = await dog.send<any>('context', [0], {});
+  expect(result.join('')).toBe('0123');
 });
 
 test('edgecase', async () => {
