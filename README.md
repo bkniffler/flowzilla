@@ -35,87 +35,135 @@ Service-dog is based a lot on the idea of middlewares (made popular by expressjs
 - [API Documentation per Typedoc](https://bkniffler.github.io/service-dog/)
 - more to come...
 
-## Example
+## Examples
 
-Just a basic example of chaining skills.
-
-### Basic
+### Database Example
 
 ```ts
-const dog = new ServiceDog();
-// Pickup
-dog.train('pickup', (type, payload, flow) => {
-  if (type === 'throw') {
-    flow({ ...payload, isInMouth: true });
-  } else {
-    flow(payload);
-  }
-});
-// Bring back
-dog.train('bring-back', (type, payload, flow) => {
-  if (type === 'throw' && payload.isInMouth) {
-    flow({ ...payload, position: 'next-to-human' });
-  } else {
-    flow(payload);
-  }
-});
-// Let fall
-dog.train('letfall', (type, payload, flow) => {
-  if (
-    type === 'throw' &&
-    payload.isInMouth &&
-    payload.position === 'next-to-human'
-  ) {
-    flow({ ...payload, isInMouth: false, drooled: drooled });
-  } else {
-    flow(payload);
-  }
-});
-// Perform an action on your dog
-const result = await dog.send<any>('throw', {
-  name: 'Stick #1',
-  drooled: false,
-  position: 'far-away'
-});
-console.log(result.drooled); // => true;
-console.log(result.position); // => 'next-to-human';
-```
+import { ServiceDog, ISkill, generateID } from 'service-dog';
+const Faltu = require('faltu');
 
-### Complex operations
+// Add a timestamp for storage, remove timestamp on retrieve
+const transform: ISkill = (type, value, flow) => {
+  function clean(i: any) {
+    delete i.lastChanged;
+    return i;
+  }
+  if (type === 'insert') {
+    flow(
+      // Add timestamp
+      { ...value, lastChanged: +new Date() },
+      // On return, remove timestamp
+      (i, n) => n(clean(i))
+    );
+  } else if (type === 'all' || type === 'get') {
+    flow(
+      // Leave untouched
+      value,
+      // On return, remove timestamp of all/one
+      (value, flow) => {
+        if (type === 'get') {
+          flow(value ? clean(value) : value);
+        } else {
+          flow(value.map(clean));
+        }
+      }
+    );
+  } else {
+    // Do nothing
+    flow(value);
+  }
+};
 
-```ts
-const dog = new ServiceDog();
-dog.train('bring-back', async (type, payload, flow) => {
-  // Access the context
-  const humanNotPatient = flow.get('bad-day');
-  if (type === 'throw' && payload.isInMouth) {
-    if (humanNotPatient) {
-      // Break the forward chain and start going backwards immediately
-      flow.return({ ...payload, position: 'next-to-human' });
-    } else if (!humanNotPatient) {
-      // Start a new action and wait
-      await flow.send('play', { with: payload.name });
-      // Continue your chain
-      flow({ ...payload, position: 'next-to-human' });
+// Transform 'remove' operation to 'insert' and set 'deleted': true
+const softDelete: ISkill = async (type, value, flow) => {
+  // On remove
+  if (type === 'remove') {
+    // Retrieve item
+    const item = await flow.send('get', value);
+    // Restart with item's 'deleted': true
+    flow.restart('insert', { ...item, deleted: true });
+  } else if (type === 'all') {
+    // Get 'includeDeleted' from options
+    const includeDeleted = flow.get('includeDeleted');
+    // Overwrite query depending on 'includeDeleted': true
+    flow(includeDeleted ? { ...value } : { ...value, deleted: { $ne: true } });
+  } else {
+    // Do nuffin'
+    flow(value);
+  }
+};
+
+const memoryPersistence = (store: any[]): ISkill => (type, value, flow) => {
+  // Handle insert and return item
+  if (type === 'insert') {
+    if (!value.id) {
+      value.id = generateID();
+      store.push(value);
     } else {
-      // Restart with a different action
-      flow.restart('play', { lostInterestInStick: true });
+      const index = store.findIndex(x => x.id === value.id);
+      store[index] = value;
     }
-  } else {
-    flow(payload);
+    flow.return({ ...value });
+  } else if (type === 'all') {
+    // Perform query and return items
+    flow.return(new Faltu(store).find(value).get());
+  } else if (type === 'get') {
+    // Perform query and return single item
+    flow.return(store.find(x => x.id === value));
+  } else if (type === 'remove') {
+    // Remove by id and return id
+    const index = store.findIndex(x => x.id === value);
+    store.splice(index, 1);
+    flow.return(value);
   }
+};
+
+class MemoryDB extends ServiceDog {
+  store: any[] = [];
+  constructor() {
+    super();
+    this.skill('persistence', memoryPersistence(this.store));
+  }
+  insert(item: any): Promise<any> {
+    return this.send('insert', item);
+  }
+  remove(id: string) {
+    return this.send('remove', id);
+  }
+  get(id: string) {
+    return this.send('get', id);
+  }
+  all(query: any = {}, includeDeleted = false) {
+    return this.send('all', query, { includeDeleted });
+  }
+}
+
+test('db-softdelete', async () => {
+  // const tracked: any[] = [];
+  const db = new MemoryDB();
+  // Insert skills at start of chain
+  db.skill([transform, softDelete], 'START');
+  // db.tracker = args => (console.log(args) as any) || tracked.push(args);
+  const item = await db.insert({ name: 'Oskar' });
+  await db.remove(item.id);
+  const item2 = await db.get(item.id);
+  expect(item2).toBeTruthy();
+  expect(item.id).toBe(item2.id);
+  const all = await db.all();
+  const all2 = await db.all({}, true);
+  expect(all.length).toBe(0);
+  expect(all2.length).toBe(1);
+  // console.log(treeizeTracker(tracked));
 });
-const result = await dog.send<any>(
-  'throw',
-  {
-    name: 'Stick #1',
-    drooled: false,
-    position: 'far-away'
-  },
-  {
-    'bad-day': true // set the context
-  }
-);
-console.log(result.drooled); // => true;
-console.log(result.position); // => 'next-to-human';
+
+test('db', async () => {
+  const db = new MemoryDB();
+  db.skill([transform], 'START');
+  const item = await db.insert({ name: 'Oskar' });
+  await db.remove(item.id);
+  const item2 = await db.get(item.id);
+  expect(item2).toBeFalsy();
+});
+
 ```
