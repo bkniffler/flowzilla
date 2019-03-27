@@ -16,108 +16,122 @@ test('array', async () => {
   const x0 = '01234';
   const start = insertToArray([1, 2, 3, 4], 0, 'START').join('');
   const end = insertToArray([0, 1, 2, 3], 4, 'END').join('');
-  const before2 = insertToArray([0, 2, 3, 4], 1, 'BEFORE', 2).join('');
-  const before1 = insertToArray([1, 2, 3, 4], 0, 'BEFORE', 1).join('');
   const before = insertToArray([0, 1, 2, 3], 4, 'BEFORE').join('');
-  const after2 = insertToArray([0, 1, 2, 4], 3, 'AFTER', 2, x => x).join('');
-  const after3 = insertToArray([0, 1, 2, 3], 4, 'AFTER', 3).join('');
+  const before1 = insertToArray([1, 2, 3, 4], 0, 'BEFORE', 1).join('');
+  const before14 = insertToArray([1, 2, 3, 4], 0, 'BEFORE', [1, 4]).join('');
+  const before2 = insertToArray([0, 2, 3, 4], 1, 'BEFORE', 2).join('');
+  const before23 = insertToArray([0, 2, 3, 4], 1, 'BEFORE', [2, 3]).join('');
+  const before3 = insertToArray([0, 1, 3, 4], 2, 'BEFORE', 3).join('');
+  const before4 = insertToArray([0, 1, 2, 4], 3, 'BEFORE', 4).join('');
   const after = insertToArray([0, 1, 2, 3], 4, 'AFTER').join('');
   const after0 = insertToArray([0, 2, 3, 4], 1, 'AFTER', 0).join('');
+  const after1 = insertToArray([0, 1, 3, 4], 2, 'AFTER', 1).join('');
+  const after13 = insertToArray([0, 1, 2, 3], 4, 'AFTER', [1, 3]).join('');
+  const after2 = insertToArray([0, 1, 2, 4], 3, 'AFTER', 2, x => x).join('');
+  const after3 = insertToArray([0, 1, 2, 3], 4, 'AFTER', 3).join('');
   expect(start).toBe(x0);
   expect(end).toBe(x0);
-  expect(before2).toBe(x0);
-  expect(before1).toBe(x0);
   expect(before).toBe(x0);
+  expect(before1).toBe(x0);
+  expect(before14).toBe(x0);
+  expect(before2).toBe(x0);
+  expect(before23).toBe(x0);
+  expect(before3).toBe(x0);
+  expect(before4).toBe(x0);
+  expect(after0).toBe(x0);
+  expect(after1).toBe(x0);
+  expect(after13).toBe(x0);
   expect(after2).toBe(x0);
   expect(after3).toBe(x0);
   expect(after).toBe(x0);
-  expect(after0).toBe(x0);
   expect(() =>
     insertToArray([0, 2, 3, 4], 1, 'AFTER', '0', x => undefined).join('')
   ).toThrow();
 });
 
-test('benchmark', async cb => {
-  const suite = new Benchmark.Suite();
+if (process.env.BENCHMARK) {
+  test('benchmark', async cb => {
+    const suite = new Benchmark.Suite();
 
-  // FN
-  function callback(type: any, value: any, cb: any) {
-    value.push(1);
-    callback2(type, value, cb);
-  }
-  function callback2(type: any, value: any, cb: any) {
-    value.push(2);
-    callback3(type, value, cb);
-  }
-  function callback3(type: any, value: any, cb: any) {
-    value.push(3);
-    cb(value);
-  }
-  // PROMISE
-  function promise(type: any, value: any) {
-    value.push(1);
-    return new Promise(yay => yay(value))
-      .then(value => promise2(type, value))
-      .then(value => promise3(type, value));
-  }
-  function promise2(type: any, value: any) {
-    value.push(2);
-    return new Promise(yay => yay(value));
-  }
-  function promise3(type: any, value: any) {
-    value.push(3);
-    return new Promise(yay => yay(value));
-  }
-  // DOG
-  const dog = new ServiceDog();
-  dog.train((type, value, flow) => {
-    value.push(1);
-    flow(value);
-  });
-  dog.train((type, value, flow) => {
-    value.push(2);
-    flow(value);
-  });
-  dog.train((type, value, flow) => {
-    value.push(3);
-    flow(value);
-  });
+    // FN
+    function callback(type: any, value: any, cb: any) {
+      value.push(1);
+      callback2(type, value, cb);
+    }
+    function callback2(type: any, value: any, cb: any) {
+      value.push(2);
+      callback3(type, value, cb);
+    }
+    function callback3(type: any, value: any, cb: any) {
+      value.push(3);
+      cb(value);
+    }
+    // PROMISE
+    function promise(type: any, value: any) {
+      value.push(1);
+      return new Promise(yay => yay(value))
+        .then(value => promise2(type, value))
+        .then(value => promise3(type, value));
+    }
+    function promise2(type: any, value: any) {
+      value.push(2);
+      return new Promise(yay => yay(value));
+    }
+    function promise3(type: any, value: any) {
+      value.push(3);
+      return new Promise(yay => yay(value));
+    }
+    // DOG
+    const dog = new ServiceDog();
+    dog.train((type, value, flow) => {
+      value.push(1);
+      flow(value);
+    });
+    dog.train((type, value, flow) => {
+      value.push(2);
+      flow(value);
+    });
+    dog.train((type, value, flow) => {
+      value.push(3);
+      flow(value);
+    });
 
-  suite
-    .add(
-      'callback',
-      function(defer: any) {
-        callback('hans', [0], () => defer.resolve());
-      },
-      { defer: true }
-    )
-    .add(
-      'promise',
-      function(defer: any) {
-        promise('hans', [0]).then(() => defer.resolve());
-      },
-      { defer: true }
-    )
-    .add(
-      'service-dog',
-      function(defer: any) {
-        dog.send<any>('hans', [0], {}).then(() => defer.resolve());
-      },
-      { defer: true }
-    )
-    .on('complete', function() {
-      const result = suite.reduce((store: any, i: any) => {
-        console.log(String(i));
-        return { ...store, [i.name]: i.hz };
-      }, {});
-      expect(result['callback']).toBeLessThan(result['service-dog']);
-      expect(result['service-dog']).toBeLessThan(result['promise']);
-      const perfScore = (100 / result['promise']) * result['service-dog'];
-      expect(perfScore).toBeGreaterThan(70);
-      cb();
-    })
-    .run({ maxTime: 2, async: true });
-}, 40000);
+    suite
+      .add(
+        'callback',
+        function(defer: any) {
+          callback('hans', [0], () => defer.resolve());
+        },
+        { defer: true }
+      )
+      .add(
+        'promise',
+        function(defer: any) {
+          promise('hans', [0]).then(() => defer.resolve());
+        },
+        { defer: true }
+      )
+      .add(
+        'service-dog',
+        function(defer: any) {
+          dog.send<any>('hans', [0], {}).then(() => defer.resolve());
+        },
+        { defer: true }
+      )
+      .on('complete', function() {
+        const result = suite.reduce((store: any, i: any) => {
+          console.log(String(i));
+          return { ...store, [i.name]: i.hz };
+        }, {});
+        expect(result['callback']).toBeLessThan(result['service-dog']);
+        expect(result['service-dog']).toBeLessThan(result['promise']);
+        const perfScore = (100 / result['promise']) * result['service-dog'];
+        expect(perfScore).toBeGreaterThan(70);
+        cb();
+      })
+      .run({ maxTime: 2, async: true });
+  }, 40000);
+}
 
 test('basic', async () => {
   const dog = new ServiceDog();

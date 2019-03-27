@@ -31,7 +31,7 @@ export function insertToArray(
       index = index < 0 ? array.length : index + 1;
     }
     index = index > array.length ? array.length : index;
-    index = index < 0 ? 0 : index;
+    // index = index < 0 ? 0 : index;
     array.splice(index, 0, item);
   } else {
     array.splice(0, 0, item);
