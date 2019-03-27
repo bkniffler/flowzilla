@@ -111,9 +111,8 @@ test('benchmark', async cb => {
       }, {});
       expect(result['callback']).toBeLessThan(result['service-dog']);
       expect(result['service-dog']).toBeLessThan(result['promise']);
-      expect((100 / result['promise']) * result['service-dog']).toBeGreaterThan(
-        80
-      );
+      const perfScore = (100 / result['promise']) * result['service-dog'];
+      expect(perfScore).toBeGreaterThan(70);
       cb();
     })
     .run({ maxTime: 2, async: true });
