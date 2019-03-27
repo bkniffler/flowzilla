@@ -1,5 +1,5 @@
 import { insertToArray } from './utils';
-import { constants } from './constants';
+import { NAME, POSITION } from './constants';
 import { ISkill, IOptions, IPosition } from './types';
 import { dispatch } from './dispatch';
 
@@ -60,17 +60,17 @@ export class ServiceDog<T1 = any> {
     const name =
       (typeof n !== 'string' ? undefined : n) ||
       skill.name ||
-      skill[constants.NAME] ||
+      skill[NAME] ||
       `skill${this.skills.length}`;
     const otherSkill = ((typeof n !== 'string' ? p : o) ||
       skill['skills'] ||
       []) as ISkill<any> | ISkill<T>[] | string | string[];
     const position = ((typeof n !== 'string' ? s : p) ||
-      skill[constants.POSITION] ||
+      skill[POSITION] ||
       'END') as IPosition;
     // Is already learned?
     if (this.skills.indexOf(skill) === -1 && !this.$skillSet[name]) {
-      skill[constants.NAME] = name;
+      skill[NAME] = name;
       this.$skillSet[name] = skill;
       insertToArray(
         this.skills,

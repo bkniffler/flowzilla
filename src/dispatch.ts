@@ -1,6 +1,6 @@
 import { ISkill, IOptions, IFlow } from './types';
 import { generateID } from './utils';
-import { constants } from './constants';
+import { STATUS, RETURN, START, COMPLETED, NAME } from './constants';
 
 export function dispatch(
   callback: Function | undefined,
@@ -20,9 +20,9 @@ export function dispatch(
     return context[key] !== undefined ? context[key] : defaultValue;
   }
   if (options.tracker) {
-    if (options[constants.STATUS] === constants.RETURN) {
+    if (options[STATUS] === RETURN) {
       options.tracker({
-        skill: constants.RETURN,
+        skill: RETURN,
         type,
         value,
         time: new Date().getTime(),
@@ -31,7 +31,7 @@ export function dispatch(
       });
     } else {
       options.tracker({
-        skill: constants.START,
+        skill: START,
         type,
         value,
         time: new Date().getTime(),
@@ -52,7 +52,7 @@ export function dispatch(
           value,
           {
             ...context,
-            [constants.STATUS]: constants.RETURN
+            [STATUS]: RETURN
           },
           parents,
           id
@@ -61,7 +61,7 @@ export function dispatch(
         // Finish
         if (options.tracker) {
           options.tracker({
-            skill: constants.COMPLETED,
+            skill: COMPLETED,
             type,
             value,
             time: new Date().getTime(),
@@ -81,7 +81,7 @@ export function dispatch(
         {
           ...options,
           ...con,
-          [constants.STATUS]: constants.START
+          [STATUS]: START
         },
         parents,
         id
@@ -97,7 +97,7 @@ export function dispatch(
           {
             ...options,
             ...con,
-            [constants.STATUS]: constants.START
+            [STATUS]: START
           },
           [...parents, skillId]
         );
@@ -106,10 +106,8 @@ export function dispatch(
     if (!skill) {
       return flowReturn(value);
     }
-    const skillName = skill[constants.NAME];
-    const skillId = `${id}.${i}${
-      options[constants.STATUS] === constants.RETURN ? '-' : ''
-    }`;
+    const skillName = skill[NAME];
+    const skillId = `${id}.${i}${options[STATUS] === RETURN ? '-' : ''}`;
     function flow(newValue: any, nextFlow: any) {
       if (nextFlow) {
         // nextFlow[constants.NAME] = `${skillName}.${nextFlow.name || 'next'}`;
@@ -133,7 +131,7 @@ export function dispatch(
         parents
       });
     }
-    if (options[constants.STATUS] === constants.RETURN) {
+    if (options[STATUS] === RETURN) {
       return (skill as any)(value, flow);
     } else {
       return skill(type, value, flow);
