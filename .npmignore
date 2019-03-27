@@ -4,3 +4,5 @@ tsconfig.base.json
 tsconfig.json
 yarn.lock
 assets
+docs
+src

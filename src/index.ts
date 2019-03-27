@@ -78,7 +78,10 @@ function dispatch(
   skills: ISkill<any>[],
   type: string,
   value: any,
-  options: IOptions = {}
+  options: IOptions = {},
+  id = Math.random()
+    .toString(36)
+    .substr(2, 9)
 ) {
   let nextFlows: IFlow<any>[] = [];
   const context = { ...options };
@@ -104,10 +107,17 @@ function dispatch(
     function flowReturn(value: any) {
       if (nextFlows.length) {
         // Afterwares present, go for them
-        return dispatch(callback, nextFlows, type, value, {
-          ...context,
-          [constants.RETURN]: true
-        });
+        return dispatch(
+          callback,
+          nextFlows,
+          type,
+          value,
+          {
+            ...context,
+            [constants.RETURN]: true
+          },
+          id
+        );
       } else if (callback) {
         // Finish
         if (options.tracker) {
@@ -117,21 +127,35 @@ function dispatch(
       }
     }
     function flowRestart(type: string, value: any, con: any = {}) {
-      return dispatch(callback, skills, type, value, {
-        ...options,
-        ...con,
-        [constants.RETURN]: undefined,
-        [constants.RESTART]: true
-      });
-    }
-    function flowSend<T>(type: string, value: any, con: any = {}) {
-      return new Promise<T>(yay => {
-        return dispatch(yay, skills, type, value, {
+      return dispatch(
+        callback,
+        skills,
+        type,
+        value,
+        {
           ...options,
           ...con,
           [constants.RETURN]: undefined,
-          [constants.NESTED]: true
-        });
+          [constants.RESTART]: true
+        },
+        id
+      );
+    }
+    function flowSend<T>(type: string, value: any, con: any = {}) {
+      return new Promise<T>(yay => {
+        return dispatch(
+          yay,
+          skills,
+          type,
+          value,
+          {
+            ...options,
+            ...con,
+            [constants.RETURN]: undefined,
+            [constants.NESTED]: true
+          },
+          id
+        );
       });
     }
     if (!skill) {
