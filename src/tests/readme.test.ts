@@ -2,21 +2,21 @@ import { ServiceDog } from '../index';
 
 test('dog', async () => {
   const dog = new ServiceDog();
-  dog.train('pickup', (type, payload, flow) => {
+  dog.skill('pickup', (type, payload, flow) => {
     if (type === 'throw') {
       flow({ ...payload, isInMouth: true });
     } else {
       flow(payload);
     }
   });
-  dog.train('bring-back', (type, payload, flow) => {
+  dog.skill('bring-back', (type, payload, flow) => {
     if (type === 'throw' && payload.isInMouth) {
       flow({ ...payload, position: 'next-to-human' });
     } else {
       flow(payload);
     }
   });
-  dog.train('letfall', (type, payload, flow) => {
+  dog.skill('letfall', (type, payload, flow) => {
     if (
       type === 'throw' &&
       payload.isInMouth &&

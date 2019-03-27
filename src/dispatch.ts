@@ -110,7 +110,7 @@ export function dispatch(
     const skillId = `${id}.${i}${options[STATUS] === RETURN ? '-' : ''}`;
     function flow(newValue: any, nextFlow: any) {
       if (nextFlow) {
-        // nextFlow[constants.NAME] = `${skillName}.${nextFlow.name || 'next'}`;
+        nextFlow[NAME] = skillName;
         nextFlows = [nextFlow, ...nextFlows];
       }
       value = newValue || value;

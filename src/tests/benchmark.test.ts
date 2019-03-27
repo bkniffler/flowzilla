@@ -38,15 +38,15 @@ if (process.env.BENCHMARK) {
     }
     // DOG
     const dog = new ServiceDog();
-    dog.train((type, value, flow) => {
+    dog.skill((type, value, flow) => {
       value.push(1);
       flow(value);
     });
-    dog.train((type, value, flow) => {
+    dog.skill((type, value, flow) => {
       value.push(2);
       flow(value);
     });
-    dog.train((type, value, flow) => {
+    dog.skill((type, value, flow) => {
       value.push(3);
       flow(value);
     });

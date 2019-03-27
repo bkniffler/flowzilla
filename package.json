@@ -57,6 +57,7 @@
     "benchmark": "^2.1.4",
     "codecov": "^3.1.0",
     "docsify-cli": "^4.3.0",
+    "faltu": "^0.1.0",
     "jest": "24.5.0",
     "lodash": "^4.17.11",
     "npm-run-all": "^4.1.3",
