@@ -99,10 +99,11 @@ class MemoryDB extends ServiceDog {
 }
 
 test('db-softdelete', async () => {
-  // const tracked: any[] = [];
+  const tracked: any[] = [];
   const db = new MemoryDB();
+  // Insert skills at start of chain
   db.skill([transform, softDelete], 'START');
-  // db.tracker = args => (console.log(args) as any) || tracked.push(args);
+  db.tracker = args => tracked.push(args);
   const item = await db.insert({ name: 'Oskar' });
   await db.remove(item.id);
   const item2 = await db.get(item.id);
