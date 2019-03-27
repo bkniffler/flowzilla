@@ -1,3 +1,5 @@
+import { insertToArray, generateID } from './utils';
+
 export interface IFlow<T> {
   (value: T, onFlowBack?: INextFlow<T>): void;
   send: <T>(type: string, value?: T, context?: any) => Promise<T>;
@@ -11,21 +13,33 @@ export type INextFlow<T = any> = (
   flow: (value: any) => void
 ) => void;
 export type ISkill<T = any> = (type: string, value: T, flow: IFlow<T>) => void;
-export type ITracker = (skillName: string, type: string, payload: any) => void;
+export interface ITrackerArg {
+  skill: string;
+  type: string;
+  time: number;
+  value: any;
+  id: string;
+  parents: (string | number)[];
+}
+export type ITracker = (arg: ITrackerArg) => void;
 export function createServiceDog<T1 = any>(name?: string) {
   return new ServiceDog<T1>(name);
 }
+export type IPosition = 'START' | 'BEFORE' | 'AFTER' | 'END';
 export class ServiceDog<T1 = any> {
   public name: string;
+  private $skillSet: any = {};
   private skills: ISkill<any>[] = [];
-  private skillsDup: any[] = [];
   constructor(name = 'chappie') {
     this.name = name;
   }
   public numberOfSkills() {
     return this.skills.length;
   }
-  send<T>(type: string, value?: T1, options?: IOptions) {
+  send<T>(type: string, value?: T1, options?: IOptions, callback?: any) {
+    if (callback) {
+      return dispatch(callback, this.skills, type, value, options);
+    }
     return new Promise<T>(yay => {
       return dispatch(yay, this.skills, type, value, options);
     });
@@ -33,41 +47,68 @@ export class ServiceDog<T1 = any> {
   sendSync(type: string, value?: T1, options?: IOptions) {
     return dispatch(undefined, this.skills, type, value, options);
   }
-  train<T = any>(skill: ISkill<T>): void;
-  train<T = any>(name: string, skill: ISkill<T>): void;
   train<T = any>(
-    name: string | ISkill<T> | undefined,
-    skill?: ISkill<T>
+    skill: ISkill<T> | ISkill<T>[],
+    position?: IPosition,
+    otherSkill?: ISkill<any> | ISkill<T>[]
+  ): void;
+  train<T = any>(
+    name: string,
+    skill: ISkill<T> | ISkill<T>[],
+    position?: IPosition,
+    otherSkill?: ISkill<any> | ISkill<T>[]
+  ): void;
+  train<T = any>(
+    n: string | ISkill<T> | ISkill<T>[] | undefined,
+    s?: ISkill<T> | ISkill<T>[] | IPosition,
+    p?: IPosition | ISkill<any> | ISkill<T>[],
+    o?: ISkill<any> | ISkill<T>[] | string | string[]
   ): void {
-    if (!skill && typeof name !== 'string') {
-      skill = name;
-      name = undefined;
-    }
+    const skill = (typeof n !== 'string' ? n : s) as ISkill<T> | ISkill<T>[];
     if (!skill) {
       throw new Error('Please provide skill or name+skill');
     }
-    skill[constants.NAME] = name || skill.name || `skill${this.skills.length}`;
-    // Is already learned?
-    if (
-      this.skillsDup.indexOf(skill) !== -1 ||
-      this.skills.find(
-        x => x[constants.NAME] === (skill as any)[constants.NAME]
-      )
-    ) {
+    if (Array.isArray(skill)) {
+      skill.forEach(skill =>
+        typeof n === 'string'
+          ? this.train(n as any, skill as any, p as any, o as any)
+          : this.train(skill as any, p as any, o as any)
+      );
       return;
     }
-    this.skillsDup.push(skill);
-    this.skills.push(skill);
+    const name =
+      (typeof n !== 'string' ? undefined : n) ||
+      skill.name ||
+      skill[constants.NAME] ||
+      `skill${this.skills.length}`;
+    const otherSkill = ((typeof n !== 'string' ? p : o) ||
+      skill['skills'] ||
+      []) as ISkill<any> | ISkill<T>[] | string | string[];
+    const position = ((typeof n !== 'string' ? s : p) ||
+      skill[constants.POSITION] ||
+      'END') as IPosition;
+    // Is already learned?
+    if (this.skills.indexOf(skill) === -1 && !this.$skillSet[name]) {
+      skill[constants.NAME] = name;
+      this.$skillSet[name] = skill;
+      insertToArray(
+        this.skills,
+        skill,
+        position,
+        otherSkill,
+        s => this.$skillSet[s]
+      );
+    }
   }
 }
 
 const constants = {
+  POSITION: 'position',
   NAME: '$name',
+  STATUS: '$status',
   RETURN: '$return',
-  RESTART: '$restart',
-  NESTED: '$nested',
   START: '$start',
-  FINISH: '$finish'
+  COMPLETED: '$completed'
 };
 interface IOptions {
   tracker?: ITracker;
@@ -79,9 +120,8 @@ function dispatch(
   type: string,
   value: any,
   options: IOptions = {},
-  id = Math.random()
-    .toString(36)
-    .substr(2, 9)
+  parents: (string | number)[] = [],
+  id = generateID()
 ) {
   let nextFlows: IFlow<any>[] = [];
   const context = { ...options };
@@ -92,14 +132,24 @@ function dispatch(
     return context[key] !== undefined ? context[key] : defaultValue;
   }
   if (options.tracker) {
-    if (options[constants.RETURN]) {
-      options.tracker(constants.RETURN, type, value);
-    } else if (options[constants.RESTART]) {
-      options.tracker('', type, value);
-    } else if (options[constants.NESTED]) {
-      options.tracker(constants.NESTED, type, value);
+    if (options[constants.STATUS] === constants.RETURN) {
+      options.tracker({
+        skill: constants.RETURN,
+        type,
+        value,
+        time: new Date().getTime(),
+        id,
+        parents
+      });
     } else {
-      options.tracker(constants.START, type, value);
+      options.tracker({
+        skill: constants.START,
+        type,
+        value,
+        time: new Date().getTime(),
+        id,
+        parents
+      });
     }
   }
   function useSkill(value: any, i = 0): any {
@@ -114,14 +164,22 @@ function dispatch(
           value,
           {
             ...context,
-            [constants.RETURN]: true
+            [constants.STATUS]: constants.RETURN
           },
+          parents,
           id
         );
       } else if (callback) {
         // Finish
         if (options.tracker) {
-          options.tracker(constants.FINISH, type, value);
+          options.tracker({
+            skill: constants.COMPLETED,
+            type,
+            value,
+            time: new Date().getTime(),
+            id,
+            parents
+          });
         }
         return callback(value);
       }
@@ -135,9 +193,9 @@ function dispatch(
         {
           ...options,
           ...con,
-          [constants.RETURN]: undefined,
-          [constants.RESTART]: true
+          [constants.STATUS]: constants.START
         },
+        parents,
         id
       );
     }
@@ -151,10 +209,9 @@ function dispatch(
           {
             ...options,
             ...con,
-            [constants.RETURN]: undefined,
-            [constants.NESTED]: true
+            [constants.STATUS]: constants.START
           },
-          id
+          [...parents, skillId]
         );
       });
     }
@@ -162,9 +219,12 @@ function dispatch(
       return flowReturn(value);
     }
     const skillName = skill[constants.NAME];
+    const skillId = `${id}.${i}${
+      options[constants.STATUS] === constants.RETURN ? '-' : ''
+    }`;
     function flow(newValue: any, nextFlow: any) {
       if (nextFlow) {
-        nextFlow[constants.NAME] = `${skillName}.${nextFlow.name || 'next'}`;
+        // nextFlow[constants.NAME] = `${skillName}.${nextFlow.name || 'next'}`;
         nextFlows = [nextFlow, ...nextFlows];
       }
       value = newValue || value;
@@ -176,13 +236,50 @@ function dispatch(
     flow.set = setContext;
     flow.send = flowSend;
     if (options.tracker) {
-      options.tracker(skillName, type, value);
+      options.tracker({
+        skill: skillName,
+        type,
+        value,
+        time: new Date().getTime(),
+        id: skillId,
+        parents
+      });
     }
-    if (options[constants.RETURN]) {
+    if (options[constants.STATUS] === constants.RETURN) {
       return (skill as any)(value, flow);
     } else {
       return skill(type, value, flow);
     }
   }
   return useSkill(value);
+}
+
+export function treeizeTracker(
+  tracker: ITrackerArg[],
+  ids: (string | number)[] = [],
+  map = (x: ITrackerArg, prev?: ITrackerArg): any => {
+    const { parents, id, ...rest } = x;
+    rest.time = prev ? x.time - prev.time : 0;
+    return rest;
+  },
+  prev?: ITrackerArg
+): any {
+  const path = ids.join('.');
+  return tracker
+    .filter(x => x.parents.join('.') === path)
+    .reduce((state, x) => {
+      const rawId = x.id.split('.')[0];
+      const children = treeizeTracker(tracker, [...ids, x.id], map, x);
+
+      const item = map(x, prev);
+      if (Object.keys(children).length) {
+        item.children = children;
+      }
+      if (!state[rawId]) {
+        state[rawId] = [];
+      }
+      state[rawId].push(item);
+      prev = x;
+      return state;
+    }, {});
 }

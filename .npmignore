@@ -6,3 +6,5 @@ yarn.lock
 assets
 docs
 src
+typedoc.js
+.travis.yml
