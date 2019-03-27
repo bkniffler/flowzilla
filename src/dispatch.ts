@@ -9,7 +9,7 @@ export function dispatch(
   value: any,
   options: IOptions = {},
   parents: (string | number)[] = [],
-  id = generateID()
+  id?: string
 ) {
   let nextFlows: IFlow<any>[] = [];
   const context = { ...options };
@@ -20,6 +20,7 @@ export function dispatch(
     return context[key] !== undefined ? context[key] : defaultValue;
   }
   if (options.tracker) {
+    id = id || generateID();
     if (options[STATUS] === RETURN) {
       options.tracker({
         skill: RETURN,
@@ -59,7 +60,7 @@ export function dispatch(
         );
       } else if (callback) {
         // Finish
-        if (options.tracker) {
+        if (options.tracker && id) {
           options.tracker({
             skill: COMPLETED,
             type,
@@ -99,7 +100,9 @@ export function dispatch(
             ...con,
             [STATUS]: START
           },
-          [...parents, skillId]
+          options.tracker
+            ? [...parents, `${id}.${i}${options[STATUS] === RETURN ? '-' : ''}`]
+            : []
         );
       });
     }
@@ -107,7 +110,6 @@ export function dispatch(
       return flowReturn(value);
     }
     const skillName = skill[NAME];
-    const skillId = `${id}.${i}${options[STATUS] === RETURN ? '-' : ''}`;
     function flow(newValue: any, nextFlow: any) {
       if (nextFlow) {
         nextFlow[NAME] = skillName;
@@ -127,7 +129,7 @@ export function dispatch(
         type,
         value,
         time: new Date().getTime(),
-        id: skillId,
+        id: `${id}.${i}${options[STATUS] === RETURN ? '-' : ''}`,
         parents
       });
     }

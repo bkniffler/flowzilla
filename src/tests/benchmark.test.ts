@@ -79,9 +79,10 @@ if (process.env.BENCHMARK) {
           return { ...store, [i.name]: i.hz };
         }, {});
         expect(result['callback']).toBeLessThan(result['service-dog']);
-        expect(result['service-dog']).toBeLessThan(result['promise']);
+        expect(result['promise']).toBeLessThan(result['service-dog']);
         const perfScore = (100 / result['promise']) * result['service-dog'];
-        expect(perfScore).toBeGreaterThan(70);
+        console.log('Score', perfScore);
+        expect(perfScore).toBeGreaterThan(100);
         cb();
       })
       .run({ maxTime: 2, async: true });

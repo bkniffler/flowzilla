@@ -8,3 +8,4 @@ docs
 src
 typedoc.js
 .travis.yml
+perf.js
