@@ -1,4 +1,4 @@
-import { ServiceDog } from './index';
+import { ServiceDog } from '../index';
 
 test('dog', async () => {
   const dog = new ServiceDog();

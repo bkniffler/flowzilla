@@ -1,3 +1,5 @@
+import { ITrackerArg } from './types';
+
 export function insertToArray(
   array: any[],
   item: any,
@@ -43,4 +45,34 @@ export function generateID() {
   return Math.random()
     .toString(36)
     .substr(2, 9);
+}
+
+export function treeizeTracker(
+  tracker: ITrackerArg[],
+  ids: (string | number)[] = [],
+  map = (x: ITrackerArg, prev?: ITrackerArg): any => {
+    const { parents, id, ...rest } = x;
+    rest.time = prev ? x.time - prev.time : 0;
+    return rest;
+  },
+  prev?: ITrackerArg
+): any {
+  const path = ids.join('.');
+  return tracker
+    .filter(x => x.parents.join('.') === path)
+    .reduce((state, x) => {
+      const rawId = x.id.split('.')[0];
+      const children = treeizeTracker(tracker, [...ids, x.id], map, x);
+
+      const item = map(x, prev);
+      if (Object.keys(children).length) {
+        item.children = children;
+      }
+      if (!state[rawId]) {
+        state[rawId] = [];
+      }
+      state[rawId].push(item);
+      prev = x;
+      return state;
+    }, {});
 }
