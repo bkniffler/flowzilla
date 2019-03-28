@@ -1,4 +1,4 @@
-import { insertToArray } from '../utils';
+import { insertToArray, generateID } from '../utils';
 
 test('array', async () => {
   const x0 = '01234';
@@ -41,4 +41,13 @@ test('array', async () => {
   expect(() =>
     insertToArray([0, 2, 3, 4], 1, 'AFTER', '0', x => undefined).join('')
   ).toThrow();
+});
+
+test('id', async () => {
+  let ids: string[] = [];
+  for (let i = 0; i < 10000; i++) {
+    ids.push(generateID('xyz'));
+  }
+  const uniques = ids.filter((v, i) => ids.indexOf(v) === i);
+  expect(uniques.length).toBe(ids.length);
 });

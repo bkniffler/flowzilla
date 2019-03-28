@@ -41,10 +41,20 @@ export function insertToArray(
   return array;
 }
 
-export function generateID() {
-  return Math.random()
-    .toString(36)
-    .substr(2, 9);
+let idCache0 = 0;
+let idCache1 = 0;
+const start = new Date(2019, 3 - 1, 28).getTime();
+export function generateID(token: string = '') {
+  const time = new Date().getTime() - start;
+  if (idCache0 === time) {
+    idCache1 = idCache1 + 1;
+  } else {
+    idCache0 = time;
+    if (idCache1 !== 0) {
+      idCache1 = 0;
+    }
+  }
+  return `${idCache0}.${token}${idCache1}`;
 }
 
 export function treeizeTracker(

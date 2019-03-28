@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 import * as Benchmark from 'benchmark';
-import { ServiceDog } from '../index';
+import { ServiceDog, generateID } from '../index';
 
 if (process.env.BENCHMARK) {
   test('benchmark', async cb => {
@@ -86,6 +86,29 @@ if (process.env.BENCHMARK) {
         const perfScore = (100 / result['promise']) * result['service-dog'];
         console.log('Score', perfScore);
         expect(perfScore).toBeGreaterThan(80);
+        cb();
+      })
+      .run({ maxTime: 2, async: true });
+  }, 40000);
+  test('benchmark-id', async cb => {
+    const suite = new Benchmark.Suite();
+    suite
+      .add('dogid', function() {
+        generateID();
+      })
+      .add('randstring32', function() {
+        Math.random()
+          .toString(36)
+          .substr(2, 9);
+      })
+      .on('complete', function() {
+        const result = suite.reduce((store: any, i: any) => {
+          console.log(String(i));
+          return { ...store, [i.name]: i.hz };
+        }, {});
+        const perfScore = (100 / result['randstring32']) * result['dogid'];
+        console.log('Score', perfScore);
+        expect(perfScore).toBeGreaterThan(100);
         cb();
       })
       .run({ maxTime: 2, async: true });
