@@ -30,13 +30,26 @@
 </div>
 
 # service-dog
+
 As soon as you send an action, service-dog will run through all of its skills, mutating the action's value along until it is done. Each skill can also hook into the return chain to modify the value again. The executional interface to service-dog is based on promises, though internally, due to performance and flexibility, service-dog uses callbacks. Thus, it can easily handle async stuff like http requests, image transformation, etc.
 
 Service-dog is based a lot on the idea of middlewares (made popular by expressjs) but is completely agnostic to what kind of operations it handles.
 
 ## Docs
+
 - [API Documentation per Typedoc](https://bkniffler.github.io/service-dog/)
 - more to come...
+
+## Install
+
+```
+yarn add service-dog
+npm i service-dog
+```
+
+### CDN
+
+A browser version is available on https://cdn.jsdelivr.net/npm/service-dog
 
 ## Examples
 
@@ -168,5 +181,4 @@ test('db', async () => {
   const item2 = await db.get(item.id);
   expect(item2).toBeFalsy();
 });
-
 ```
