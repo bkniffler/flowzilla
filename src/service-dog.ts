@@ -37,6 +37,14 @@ export class ServiceDog<T1 = any> {
     options = this.appendTracker(options);
     return dispatch(undefined, this.skills, type, value, options);
   }
+  removeSkill(skill: string | ISkill) {
+    skill = typeof skill === 'string' ? this.$skillSet[skill] : skill;
+    const index = this.skills.indexOf(skill as any);
+    if (index >= 0) {
+      delete this.$skillSet[skill as any];
+      this.skills.splice(this.skills.indexOf(skill as any), 1);
+    }
+  }
   skill<T = any>(
     skill: ISkill<T> | ISkill<T>[],
     position?: IPosition,

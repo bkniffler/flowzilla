@@ -208,6 +208,25 @@ test('sync', async () => {
   expect(result.length).toBe(2);
 });
 
+test('remove', async () => {
+  const dog = new ServiceDog();
+  dog.skill('1', (type, value) => {
+    value.push(1);
+    return value;
+  });
+  expect(dog.numberOfSkills()).toBe(1);
+  dog.removeSkill('1');
+  expect(dog.numberOfSkills()).toBe(0);
+  function skill1(type: string, value: any) {
+    value.push(1);
+    return value;
+  }
+  dog.skill(skill1);
+  expect(dog.numberOfSkills()).toBe(1);
+  dog.removeSkill(skill1);
+  expect(dog.numberOfSkills()).toBe(0);
+});
+
 test('hooks', async () => {
   const dog = new ServiceDog();
   dog.skill((type, value, flow) => {
