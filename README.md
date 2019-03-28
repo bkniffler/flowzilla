@@ -4,7 +4,7 @@
   </a>
 </div>
 <div align="center">
-  <strong>Teach your service-dogs whatever skill it needs and let it handle your requests.</strong>
+  <strong>Teach your service-dog whatever skills it needs and let it handle your requests.</strong>
   <br />
   <br />
   <a href="https://travis-ci.org/bkniffler/service-dog">
@@ -31,9 +31,9 @@
 
 # service-dog
 
-As soon as you send an action, service-dog will run through all of its skills, mutating the action's value along until it is done. Each skill can also hook into the return chain to modify the value again. The executional interface to service-dog is based on promises, though internally, due to performance and flexibility, service-dog uses callbacks. Thus, it can easily handle async stuff like http requests, image transformation, etc.
+Create flexible and extandable data flows by encapsulating operations into skills, making an ordered chain that can handle whatever request you throw at it. As soon as you send an action, service-dog will run through all of its skills, mutating the action's value along until it is done. Each skill can also hook into the return chain to modify the value on its way back. The executional interface to service-dog is based on promises, though internally, due to performance and flexibility, service-dog uses callbacks. Thus, it can easily handle async stuff like http requests, image transformation, etc.
 
-Service-dog is based a lot on the idea of middlewares (made popular by expressjs) but is completely agnostic to what kind of operations it handles.
+Service-dog is based a lot on the idea of middlewares (made popular by expressjs) but is completely agnostic to what kind of operations it handles. It excels in cases where you'd work with class overwriting and/or hooks to allow extending some part of functionality. A classic example is a database with different adapters and plugins (like soft-delete, auditing, time-stamping), a server that can handle requests, an authentication/authorization system, an API client. Basically anything that has a strong focus on how data flows.
 
 ## Docs
 
