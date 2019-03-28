@@ -85,7 +85,7 @@ if (process.env.BENCHMARK) {
         expect(result['promise']).toBeLessThan(result['service-dog']);
         const perfScore = (100 / result['promise']) * result['service-dog'];
         console.log('Score', perfScore);
-        expect(perfScore).toBeGreaterThan(100);
+        expect(perfScore).toBeGreaterThan(80);
         cb();
       })
       .run({ maxTime: 2, async: true });

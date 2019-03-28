@@ -14,11 +14,9 @@
   "scripts": {
     "up": "yarn upgrade-interactive --latest",
     "docs": "docsify serve docs",
-    "typedoc": "run-s typedoc:*",
-    "typedoc:clean": "rimraf docs",
-    "typedoc:lerna": "typedoc --options ./typedoc.js ./src",
     "build": "run-s build:*",
     "dev": "run-p \"build:* -- --watch\"",
+    "build:typedoc": "rimraf docs/typedoc && typedoc --options ./typedoc.js ./src",
     "build:clean": "rimraf lib",
     "build:ts": "tsc --build",
     "build:rollup": "rollup -c",

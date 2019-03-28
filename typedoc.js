@@ -1,5 +1,5 @@
 module.exports = {
-  out: './docs',
+  out: './docs/typedoc',
   tsconfig: './tsconfig.json',
 
   // readme: 'none',
