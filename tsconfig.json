@@ -4,7 +4,8 @@
     "baseUrl": "./",
     "rootDir": "src",
     "outDir": "lib",
-    "module": "esnext"
+    "module": "esnext",
+    "importHelpers": true
   },
   "include": ["src"],
   "exclude": ["**/*.test.ts", "**/*.test.tsx", "node_modules"]
