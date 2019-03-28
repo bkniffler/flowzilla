@@ -1,6 +1,6 @@
 {
   "name": "service-dog",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "sideEffects": false,
   "license": "MIT",
   "main": "./lib/index.cjs.js",
@@ -23,7 +23,7 @@
     "build:ts": "tsc --build",
     "build:rollup": "rollup -c",
     "clean": "rimraf ./lib ./es",
-    "p": "yarn build && yarn test && npm publish --registry https://registry.npmjs.org",
+    "p": "yarn test && yarn build && npm publish --registry https://registry.npmjs.org",
     "test": "jest --verbose=false",
     "coverage": "codecov"
   },

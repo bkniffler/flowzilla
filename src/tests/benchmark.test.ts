@@ -7,6 +7,9 @@ import { ServiceDog } from '../index';
 if (process.env.BENCHMARK) {
   test('benchmark', async cb => {
     const suite = new Benchmark.Suite();
+    const timeout = (result: any) => (cb: any) => {
+      setTimeout(() => cb(result), 0);
+    };
 
     // FN
     function callback(type: any, value: any, cb: any) {
@@ -19,7 +22,7 @@ if (process.env.BENCHMARK) {
     }
     function callback3(type: any, value: any, cb: any) {
       value.push(3);
-      cb(value);
+      timeout(value)(cb);
     }
     // PROMISE
     function promise(type: any, value: any) {
@@ -34,7 +37,7 @@ if (process.env.BENCHMARK) {
     }
     function promise3(type: any, value: any) {
       value.push(3);
-      return new Promise(yay => yay(value));
+      return new Promise(timeout(value));
     }
     // DOG
     const dog = new ServiceDog();
@@ -48,7 +51,7 @@ if (process.env.BENCHMARK) {
     });
     dog.skill((type, value, flow) => {
       value.push(3);
-      flow(value);
+      timeout(value)(flow);
     });
 
     suite
