@@ -51,6 +51,10 @@ npm i service-dog
 
 A browser version is available on https://cdn.jsdelivr.net/npm/service-dog
 
+### CodeSandbox
+
+A very basic codesandbox on https://codesandbox.io/s/pp3zwnxk7m
+
 ## Examples
 
 ### Database Example
