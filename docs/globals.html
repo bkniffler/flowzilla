@@ -73,20 +73,38 @@
 							<h3>Interfaces</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-interface tsd-has-type-parameter"><a href="interfaces/iflow.html" class="tsd-kind-icon">IFlow</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/ioptions.html" class="tsd-kind-icon">IOptions</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/itrackerarg.html" class="tsd-kind-icon">ITracker<wbr>Arg</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Type aliases</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="globals.html#inextflow" class="tsd-kind-icon">INext<wbr>Flow</a></li>
+								<li class="tsd-kind-type-alias"><a href="globals.html#iposition" class="tsd-kind-icon">IPosition</a></li>
 								<li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="globals.html#iskill" class="tsd-kind-icon">ISkill</a></li>
 								<li class="tsd-kind-type-alias"><a href="globals.html#itracker" class="tsd-kind-icon">ITracker</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Variables</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-variable"><a href="globals.html#completed" class="tsd-kind-icon">COMPLETED</a></li>
+								<li class="tsd-kind-variable"><a href="globals.html#name" class="tsd-kind-icon">NAME</a></li>
+								<li class="tsd-kind-variable"><a href="globals.html#position" class="tsd-kind-icon">POSITION</a></li>
+								<li class="tsd-kind-variable"><a href="globals.html#return" class="tsd-kind-icon">RETURN</a></li>
+								<li class="tsd-kind-variable"><a href="globals.html#start" class="tsd-kind-icon">START</a></li>
+								<li class="tsd-kind-variable"><a href="globals.html#status" class="tsd-kind-icon">STATUS</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-has-type-parameter"><a href="globals.html#createservicedog" class="tsd-kind-icon">create<wbr>Service<wbr>Dog</a></li>
+								<li class="tsd-kind-function"><a href="globals.html#dispatch" class="tsd-kind-icon">dispatch</a></li>
+								<li class="tsd-kind-function"><a href="globals.html#generateid" class="tsd-kind-icon">generateID</a></li>
+								<li class="tsd-kind-function"><a href="globals.html#inserttoarray" class="tsd-kind-icon">insert<wbr>ToArray</a></li>
+								<li class="tsd-kind-function"><a href="globals.html#treeizetracker" class="tsd-kind-icon">treeize<wbr>Tracker</a></li>
 							</ul>
 						</section>
 					</div>
@@ -100,7 +118,7 @@
 					<div class="tsd-signature tsd-kind-icon">INext<wbr>Flow<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/bkniffler/service-dog/blob/960121a/src/index.ts#L9">index.ts:9</a></li>
+							<li>Defined in <a href="https://github.com/bkniffler/service-dog/blob/a483b5a/src/types.ts#L9">types.ts:9</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -146,13 +164,23 @@
 						</ul>
 					</div>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias">
+					<a name="iposition" class="tsd-anchor"></a>
+					<h3>IPosition</h3>
+					<div class="tsd-signature tsd-kind-icon">IPosition<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"START"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"BEFORE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"AFTER"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"END"</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/bkniffler/service-dog/blob/a483b5a/src/types.ts#L23">types.ts:23</a></li>
+						</ul>
+					</aside>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-has-type-parameter">
 					<a name="iskill" class="tsd-anchor"></a>
 					<h3>ISkill</h3>
 					<div class="tsd-signature tsd-kind-icon">ISkill<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/bkniffler/service-dog/blob/960121a/src/index.ts#L13">index.ts:13</a></li>
+							<li>Defined in <a href="https://github.com/bkniffler/service-dog/blob/a483b5a/src/types.ts#L13">types.ts:13</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -189,7 +217,7 @@
 					<div class="tsd-signature tsd-kind-icon">ITracker<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/bkniffler/service-dog/blob/960121a/src/index.ts#L14">index.ts:14</a></li>
+							<li>Defined in <a href="https://github.com/bkniffler/service-dog/blob/a483b5a/src/types.ts#L22">types.ts:22</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -197,20 +225,14 @@
 						<ul class="tsd-parameters">
 							<li class="tsd-parameter-siganture">
 								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias tsd-is-not-exported">
-									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>skillName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, payload<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>arg<span class="tsd-signature-symbol">: </span><a href="interfaces/itrackerarg.html" class="tsd-signature-type">ITrackerArg</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 								</ul>
 								<ul class="tsd-descriptions">
 									<li class="tsd-description">
 										<h4 class="tsd-parameters-title">Parameters</h4>
 										<ul class="tsd-parameters">
 											<li>
-												<h5>skillName: <span class="tsd-signature-type">string</span></h5>
-											</li>
-											<li>
-												<h5>type: <span class="tsd-signature-type">string</span></h5>
-											</li>
-											<li>
-												<h5>payload: <span class="tsd-signature-type">any</span></h5>
+												<h5>arg: <a href="interfaces/itrackerarg.html" class="tsd-signature-type">ITrackerArg</a></h5>
 											</li>
 										</ul>
 										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -219,6 +241,69 @@
 							</li>
 						</ul>
 					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Variables</h2>
+				<section class="tsd-panel tsd-member tsd-kind-variable">
+					<a name="completed" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> COMPLETED</h3>
+					<div class="tsd-signature tsd-kind-icon">COMPLETED<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"$completed"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;$completed&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/bkniffler/service-dog/blob/a483b5a/src/constants.ts#L6">constants.ts:6</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable">
+					<a name="name" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> NAME</h3>
+					<div class="tsd-signature tsd-kind-icon">NAME<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"$name"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;$name&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/bkniffler/service-dog/blob/a483b5a/src/constants.ts#L2">constants.ts:2</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable">
+					<a name="position" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> POSITION</h3>
+					<div class="tsd-signature tsd-kind-icon">POSITION<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"position"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;position&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/bkniffler/service-dog/blob/a483b5a/src/constants.ts#L1">constants.ts:1</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable">
+					<a name="return" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> RETURN</h3>
+					<div class="tsd-signature tsd-kind-icon">RETURN<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"$return"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;$return&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/bkniffler/service-dog/blob/a483b5a/src/constants.ts#L4">constants.ts:4</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable">
+					<a name="start" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> START</h3>
+					<div class="tsd-signature tsd-kind-icon">START<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"$start"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;$start&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/bkniffler/service-dog/blob/a483b5a/src/constants.ts#L5">constants.ts:5</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable">
+					<a name="status" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> STATUS</h3>
+					<div class="tsd-signature tsd-kind-icon">STATUS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"$status"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;$status&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/bkniffler/service-dog/blob/a483b5a/src/constants.ts#L3">constants.ts:3</a></li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -233,7 +318,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/bkniffler/service-dog/blob/960121a/src/index.ts#L15">index.ts:15</a></li>
+									<li>Defined in <a href="https://github.com/bkniffler/service-dog/blob/a483b5a/src/service-dog.ts#L6">service-dog.ts:6</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -249,6 +334,149 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="classes/servicedog.html" class="tsd-signature-type">ServiceDog</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T1</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="dispatch" class="tsd-anchor"></a>
+					<h3>dispatch</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">dispatch<span class="tsd-signature-symbol">(</span>callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span>, skills<span class="tsd-signature-symbol">: </span><a href="globals.html#iskill" class="tsd-signature-type">ISkill</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span>, type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, options<span class="tsd-signature-symbol">?: </span><a href="interfaces/ioptions.html" class="tsd-signature-type">IOptions</a>, parents<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span>, id<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/bkniffler/service-dog/blob/a483b5a/src/dispatch.ts#L5">dispatch.ts:5</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>callback: <span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h5>
+								</li>
+								<li>
+									<h5>skills: <a href="globals.html#iskill" class="tsd-signature-type">ISkill</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>type: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>value: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <a href="interfaces/ioptions.html" class="tsd-signature-type">IOptions</a><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> parents: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> id: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="generateid" class="tsd-anchor"></a>
+					<h3>generateID</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">generateID<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/bkniffler/service-dog/blob/a483b5a/src/utils.ts#L44">utils.ts:44</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="inserttoarray" class="tsd-anchor"></a>
+					<h3>insert<wbr>ToArray</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">insert<wbr>ToArray<span class="tsd-signature-symbol">(</span>array<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span>, item<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, position<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">"START"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"END"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"BEFORE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"AFTER"</span>, anchor<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, findItem<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/bkniffler/service-dog/blob/a483b5a/src/utils.ts#L3">utils.ts:3</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>array: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>item: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> position: <span class="tsd-signature-type">"START"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"END"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"BEFORE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"AFTER"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;END&quot;</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> anchor: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> findItem: <span class="tsd-signature-type">function</span><span class="tsd-signature-symbol"> =&nbsp;x &#x3D;&gt; x</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-siganture">
+											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>item<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>item: <span class="tsd-signature-type">string</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="treeizetracker" class="tsd-anchor"></a>
+					<h3>treeize<wbr>Tracker</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">treeize<wbr>Tracker<span class="tsd-signature-symbol">(</span>tracker<span class="tsd-signature-symbol">: </span><a href="interfaces/itrackerarg.html" class="tsd-signature-type">ITrackerArg</a><span class="tsd-signature-symbol">[]</span>, ids<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span>, map<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">(Anonymous function)</span>, prev<span class="tsd-signature-symbol">?: </span><a href="interfaces/itrackerarg.html" class="tsd-signature-type">ITrackerArg</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/bkniffler/service-dog/blob/a483b5a/src/utils.ts#L50">utils.ts:50</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>tracker: <a href="interfaces/itrackerarg.html" class="tsd-signature-type">ITrackerArg</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> ids: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> map: <span class="tsd-signature-type">(Anonymous function)</span><span class="tsd-signature-symbol"> =&nbsp;(x: ITrackerArg, prev?: ITrackerArg): any &#x3D;&gt; {const { parents, id, ...rest } &#x3D; x;rest.time &#x3D; prev ? x.time - prev.time : 0;return rest;}</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> prev: <a href="interfaces/itrackerarg.html" class="tsd-signature-type">ITrackerArg</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -270,8 +498,17 @@
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
 						<a href="interfaces/iflow.html" class="tsd-kind-icon">IFlow</a>
 					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ioptions.html" class="tsd-kind-icon">IOptions</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/itrackerarg.html" class="tsd-kind-icon">ITracker<wbr>Arg</a>
+					</li>
 					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
 						<a href="globals.html#inextflow" class="tsd-kind-icon">INext<wbr>Flow</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#iposition" class="tsd-kind-icon">IPosition</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
 						<a href="globals.html#iskill" class="tsd-kind-icon">ISkill</a>
@@ -279,8 +516,38 @@
 					<li class=" tsd-kind-type-alias">
 						<a href="globals.html#itracker" class="tsd-kind-icon">ITracker</a>
 					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#completed" class="tsd-kind-icon">COMPLETED</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#name" class="tsd-kind-icon">NAME</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#position" class="tsd-kind-icon">POSITION</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#return" class="tsd-kind-icon">RETURN</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#start" class="tsd-kind-icon">START</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#status" class="tsd-kind-icon">STATUS</a>
+					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
 						<a href="globals.html#createservicedog" class="tsd-kind-icon">create<wbr>Service<wbr>Dog</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#dispatch" class="tsd-kind-icon">dispatch</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#generateid" class="tsd-kind-icon">generateID</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#inserttoarray" class="tsd-kind-icon">insert<wbr>ToArray</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#treeizetracker" class="tsd-kind-icon">treeize<wbr>Tracker</a>
 					</li>
 				</ul>
 			</nav>
