@@ -22,6 +22,9 @@
   <a href="https://github.com/bkniffler/service-dog/master/LICENSE">
     <img src="https://img.shields.io/github/license/bkniffler/service-dog.svg?style=flat-square" alt="License">
   </a>
+  <a href="https://github.com/bkniffler/service-dog">
+    <img src="https://flat.badgen.net/bundlephobia/minzip/service-dog" alt="License">
+  </a>
   <br />
   <br />
 </div>
