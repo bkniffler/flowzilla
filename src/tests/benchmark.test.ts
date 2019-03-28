@@ -82,9 +82,8 @@ if (process.env.BENCHMARK) {
           return { ...store, [i.name]: i.hz };
         }, {});
         const perfScore = (100 / result['promise']) * result['service-dog'];
-        const perfScore2 = (100 / result['promise']) * result['service-dog'];
+        const perfScore2 = (100 / result['callback']) * result['service-dog'];
         console.log('Score', perfScore, perfScore2);
-        console.log('Score', perfScore);
         expect(perfScore).toBeGreaterThan(80);
         expect(perfScore2).toBeGreaterThan(80);
         cb();

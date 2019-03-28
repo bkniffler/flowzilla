@@ -66,7 +66,7 @@
 					</a>
 				</div>
 				<div align="center">
-					<strong>Teach your service-dogs whatever skill it needs and let it handle your requests.</strong>
+					<strong>Teach your service-dog whatever skills it needs and let it handle your requests.</strong>
 					<br />
 					<br />
 					<a href="https://travis-ci.org/bkniffler/service-dog">
@@ -84,145 +84,27 @@
 					<a href="https://github.com/bkniffler/service-dog/master/LICENSE">
 						<img src="https://img.shields.io/github/license/bkniffler/service-dog.svg?style=flat-square" alt="License">
 					</a>
+					<a href="https://github.com/bkniffler/service-dog">
+						<img src="https://flat.badgen.net/bundlephobia/minzip/service-dog" alt="License">
+					</a>
 					<br />
 					<br />
 				</div>
 				<h1 id="service-dog">service-dog</h1>
-				<p>As soon as you send an action, service-dog will run through all of its skills, mutating the action&#39;s value along until it is done. Each skill can also hook into the return chain to modify the value again. The executional interface to service-dog is based on promises, though internally, due to performance and flexibility, service-dog uses callbacks. Thus, it can easily handle async stuff like http requests, image transformation, etc.</p>
-				<p>Service-dog is based a lot on the idea of middlewares (made popular by expressjs) but is completely agnostic to what kind of operations it handles.</p>
+				<p>Create flexible and extandable data flows by encapsulating operations into skills, making an ordered chain that can handle whatever request you throw at it. As soon as you send an action, service-dog will run through all of its skills, mutating the action&#39;s value along until it is done. Each skill can also hook into the return chain to modify the value on its way back. The executional interface to service-dog is based on promises, though internally, due to performance and flexibility, service-dog uses callbacks. Thus, it can easily handle async stuff like http requests, image transformation, etc.</p>
+				<p>Service-Dog is based a lot on the idea of middlewares (made popular by expressjs) but is completely agnostic to what kind of operations it handles. It is also inspired by redux, though only on the action/middleware part. It excels in cases where you&#39;d work with class overwriting and/or hooks to allow extending some part of functionality. A classic example is a database with different adapters and plugins (like soft-delete, auditing, time-stamping), a server that can handle requests, an authentication/authorization system, an API client. Basically anything that has a strong focus on how data flows.</p>
+				<p>It can also help you check your flow by providing a tracker that will fire on start and completion of your chain and each time a skill is entered.</p>
+				<p>This library works on node and in the browser, has no dependencies except for tslib (no dependencies, 2kb gzipped) and is tree shackable.</p>
 				<h2 id="docs">Docs</h2>
 				<ul>
-					<li><a href="https://bkniffler.github.io/service-dog/">API Documentation per Typedoc</a></li>
-					<li>more to come...</li>
+					<li><a href="https://bkniffler.github.io/service-dog/">Documentation</a></li>
+					<li><a href="https://bkniffler.github.io/service-dog/typedoc">Typedoc</a></li>
+					<li><a href="https://codesandbox.io/s/pp3zwnxk7m">CodeSandbox Playground</a></li>
 				</ul>
-				<h2 id="examples">Examples</h2>
-				<h3 id="database-example">Database Example</h3>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { ServiceDog, ISkill, generateID } <span class="hljs-keyword">from</span> <span class="hljs-string">'service-dog'</span>;
-<span class="hljs-keyword">const</span> Faltu = <span class="hljs-built_in">require</span>(<span class="hljs-string">'faltu'</span>);
-
-<span class="hljs-comment">// Add a timestamp for storage, remove timestamp on retrieve</span>
-<span class="hljs-keyword">const</span> transform: ISkill = <span class="hljs-function">(<span class="hljs-params"><span class="hljs-keyword">type</span>, value, flow</span>) =&gt;</span> {
-  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">clean</span>(<span class="hljs-params">i: <span class="hljs-built_in">any</span></span>) </span>{
-    <span class="hljs-keyword">delete</span> i.lastChanged;
-    <span class="hljs-keyword">return</span> i;
-  }
-  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">type</span> === <span class="hljs-string">'insert'</span>) {
-    flow(
-      <span class="hljs-comment">// Add timestamp</span>
-      { ...value, lastChanged: +<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>() },
-      <span class="hljs-comment">// On return, remove timestamp</span>
-      (i, n) =&gt; n(clean(i))
-    );
-  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">type</span> === <span class="hljs-string">'all'</span> || <span class="hljs-keyword">type</span> === <span class="hljs-string">'get'</span>) {
-    flow(
-      <span class="hljs-comment">// Leave untouched</span>
-      value,
-      <span class="hljs-comment">// On return, remove timestamp of all/one</span>
-      (value, flow) =&gt; {
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">type</span> === <span class="hljs-string">'get'</span>) {
-          flow(value ? clean(value) : value);
-        } <span class="hljs-keyword">else</span> {
-          flow(value.map(clean));
-        }
-      }
-    );
-  } <span class="hljs-keyword">else</span> {
-    <span class="hljs-comment">// Do nothing</span>
-    flow(value);
-  }
-};
-
-<span class="hljs-comment">// Transform 'remove' operation to 'insert' and set 'deleted': true</span>
-<span class="hljs-keyword">const</span> softDelete: ISkill = <span class="hljs-keyword">async</span> (<span class="hljs-keyword">type</span>, value, flow) =&gt; {
-  <span class="hljs-comment">// On remove</span>
-  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">type</span> === <span class="hljs-string">'remove'</span>) {
-    <span class="hljs-comment">// Retrieve item</span>
-    <span class="hljs-keyword">const</span> item = <span class="hljs-keyword">await</span> flow.send(<span class="hljs-string">'get'</span>, value);
-    <span class="hljs-comment">// Restart with item's 'deleted': true</span>
-    flow.restart(<span class="hljs-string">'insert'</span>, { ...item, deleted: <span class="hljs-literal">true</span> });
-  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">type</span> === <span class="hljs-string">'all'</span>) {
-    <span class="hljs-comment">// Get 'includeDeleted' from options</span>
-    <span class="hljs-keyword">const</span> includeDeleted = flow.get(<span class="hljs-string">'includeDeleted'</span>);
-    <span class="hljs-comment">// Overwrite query depending on 'includeDeleted': true</span>
-    flow(includeDeleted ? { ...value } : { ...value, deleted: { $ne: <span class="hljs-literal">true</span> } });
-  } <span class="hljs-keyword">else</span> {
-    <span class="hljs-comment">// Do nuffin'</span>
-    flow(value);
-  }
-};
-
-<span class="hljs-keyword">const</span> memoryPersistence = <span class="hljs-function">(<span class="hljs-params">store: <span class="hljs-built_in">any</span>[]</span>): <span class="hljs-params">ISkill</span> =&gt;</span> (<span class="hljs-keyword">type</span>, value, flow) =&gt; {
-  <span class="hljs-comment">// Handle insert and return item</span>
-  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">type</span> === <span class="hljs-string">'insert'</span>) {
-    <span class="hljs-keyword">if</span> (!value.id) {
-      value.id = generateID();
-      store.push(value);
-    } <span class="hljs-keyword">else</span> {
-      <span class="hljs-keyword">const</span> index = store.findIndex(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x.id === value.id);
-      store[index] = value;
-    }
-    flow.return({ ...value });
-  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">type</span> === <span class="hljs-string">'all'</span>) {
-    <span class="hljs-comment">// Perform query and return items</span>
-    flow.return(<span class="hljs-keyword">new</span> Faltu(store).find(value).get());
-  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">type</span> === <span class="hljs-string">'get'</span>) {
-    <span class="hljs-comment">// Perform query and return single item</span>
-    flow.return(store.find(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x.id === value));
-  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">type</span> === <span class="hljs-string">'remove'</span>) {
-    <span class="hljs-comment">// Remove by id and return id</span>
-    <span class="hljs-keyword">const</span> index = store.findIndex(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x.id === value);
-    store.splice(index, <span class="hljs-number">1</span>);
-    flow.return(value);
-  }
-};
-
-<span class="hljs-keyword">class</span> MemoryDB <span class="hljs-keyword">extends</span> ServiceDog {
-  store: <span class="hljs-built_in">any</span>[] = [];
-  <span class="hljs-keyword">constructor</span>(<span class="hljs-params"></span>) {
-    <span class="hljs-keyword">super</span>();
-    <span class="hljs-keyword">this</span>.skill(<span class="hljs-string">'persistence'</span>, memoryPersistence(<span class="hljs-keyword">this</span>.store));
-  }
-  insert(item: <span class="hljs-built_in">any</span>): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-built_in">any</span>&gt; {
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.send(<span class="hljs-string">'insert'</span>, item);
-  }
-  remove(id: <span class="hljs-built_in">string</span>) {
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.send(<span class="hljs-string">'remove'</span>, id);
-  }
-  <span class="hljs-keyword">get</span>(id: <span class="hljs-built_in">string</span>) {
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.send(<span class="hljs-string">'get'</span>, id);
-  }
-  all(query: <span class="hljs-built_in">any</span> = {}, includeDeleted = <span class="hljs-literal">false</span>) {
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.send(<span class="hljs-string">'all'</span>, query, { includeDeleted });
-  }
-}
-
-test(<span class="hljs-string">'db-softdelete'</span>, <span class="hljs-keyword">async</span> () =&gt; {
-  <span class="hljs-comment">// const tracked: any[] = [];</span>
-  <span class="hljs-keyword">const</span> db = <span class="hljs-keyword">new</span> MemoryDB();
-  <span class="hljs-comment">// Insert skills at start of chain</span>
-  db.skill([transform, softDelete], <span class="hljs-string">'START'</span>);
-  <span class="hljs-comment">// db.tracker = args =&gt; (console.log(args) as any) || tracked.push(args);</span>
-  <span class="hljs-keyword">const</span> item = <span class="hljs-keyword">await</span> db.insert({ name: <span class="hljs-string">'Oskar'</span> });
-  <span class="hljs-keyword">await</span> db.remove(item.id);
-  <span class="hljs-keyword">const</span> item2 = <span class="hljs-keyword">await</span> db.get(item.id);
-  expect(item2).toBeTruthy();
-  expect(item.id).toBe(item2.id);
-  <span class="hljs-keyword">const</span> all = <span class="hljs-keyword">await</span> db.all();
-  <span class="hljs-keyword">const</span> all2 = <span class="hljs-keyword">await</span> db.all({}, <span class="hljs-literal">true</span>);
-  expect(all.length).toBe(<span class="hljs-number">0</span>);
-  expect(all2.length).toBe(<span class="hljs-number">1</span>);
-  <span class="hljs-comment">// console.log(treeizeTracker(tracked));</span>
-});
-
-test(<span class="hljs-string">'db'</span>, <span class="hljs-keyword">async</span> () =&gt; {
-  <span class="hljs-keyword">const</span> db = <span class="hljs-keyword">new</span> MemoryDB();
-  db.skill([transform], <span class="hljs-string">'START'</span>);
-  <span class="hljs-keyword">const</span> item = <span class="hljs-keyword">await</span> db.insert({ name: <span class="hljs-string">'Oskar'</span> });
-  <span class="hljs-keyword">await</span> db.remove(item.id);
-  <span class="hljs-keyword">const</span> item2 = <span class="hljs-keyword">await</span> db.get(item.id);
-  expect(item2).toBeFalsy();
-});
-</code></pre>
+				<h2 id="install">Install</h2>
+				<pre><code>yarn <span class="hljs-keyword">add</span><span class="bash"> service-dog</span>
+npm i service-dog</code></pre><h3 id="cdn">CDN</h3>
+				<p>A browser version is available on <a href="https://cdn.jsdelivr.net/npm/service-dog">https://cdn.jsdelivr.net/npm/service-dog</a></p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
