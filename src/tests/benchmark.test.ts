@@ -40,15 +40,15 @@ if (process.env.BENCHMARK) {
       return new Promise(timeout(value));
     }
     const flowzilla = new Flowzilla();
-    flowzilla.add((type, value, flow) => {
+    flowzilla.addSkill((type, value, flow) => {
       value.push(1);
       flow(value);
     });
-    flowzilla.add((type, value, flow) => {
+    flowzilla.addSkill((type, value, flow) => {
       value.push(2);
       flow(value);
     });
-    flowzilla.add((type, value, flow) => {
+    flowzilla.addSkill((type, value, flow) => {
       value.push(3);
       timeout(value)(flow);
     });

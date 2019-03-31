@@ -8,19 +8,19 @@ import {
 
 test('basic', async () => {
   const flowzilla = new Flowzilla();
-  flowzilla.add((type, value, flow) => {
+  flowzilla.addSkill((type, value, flow) => {
     value.push(1);
     flow(value);
   });
-  flowzilla.add((type, value, flow) => {
+  flowzilla.addSkill((type, value, flow) => {
     value.push(2);
     flow(value);
   });
-  flowzilla.add((type, value, flow) => {
+  flowzilla.addSkill((type, value, flow) => {
     value.push(3);
     flow(value);
   });
-  flowzilla.add((type, value, flow) => {
+  flowzilla.addSkill((type, value, flow) => {
     flow(value);
   });
   const result = await flowzilla.run<any>('hans', [0], {});
@@ -30,12 +30,12 @@ test('basic', async () => {
 
 test('context', async () => {
   const flowzilla = new Flowzilla();
-  flowzilla.add((type, value, flow) => {
+  flowzilla.addSkill((type, value, flow) => {
     flow.set('1', 1);
     flow.set('2', 2);
     flow(value);
   });
-  flowzilla.add((type, value, flow) => {
+  flowzilla.addSkill((type, value, flow) => {
     flow(
       [...value, flow.get('1'), flow.get('2'), flow.get('3', 3)].reduce(
         (result, num) => result + num
@@ -48,7 +48,7 @@ test('context', async () => {
 
 test('callback', cb => {
   const flowzilla = new Flowzilla();
-  flowzilla.add((type, value, flow) => {
+  flowzilla.addSkill((type, value, flow) => {
     flow(value);
   });
   flowzilla.run<any>('context', [0], {}, (result: any) => {
@@ -59,7 +59,7 @@ test('callback', cb => {
 
 test('tracker', async () => {
   const flowzilla = new Flowzilla();
-  flowzilla.add((type, value, flow) => {
+  flowzilla.addSkill((type, value, flow) => {
     flow(value);
   });
   const tracker: any = [];
@@ -82,8 +82,8 @@ test('depending', async () => {
   };
   // skillA['skills'] = ['skillB', skillC];
   // skillA['position'] = 'BEFORE';
-  // flowzilla.add(skillB);
-  flowzilla.add([skillA, skillB, skillC]);
+  // flowzilla.addSkill(skillB);
+  flowzilla.addSkill([skillA, skillB, skillC]);
   const result = await flowzilla.run<any>('context', [0], {});
   expect(result.join('')).toBe('0123');
 });
@@ -101,8 +101,8 @@ test('depending-with-position', async () => {
   };
   // skillA['skills'] = ['skillB', skillC];
   // skillA['position'] = 'BEFORE';
-  flowzilla.add([skillB, skillC]);
-  flowzilla.add(skillA, 'BEFORE', skillB);
+  flowzilla.addSkill([skillB, skillC]);
+  flowzilla.addSkill(skillA, 'BEFORE', skillB);
   const result = await flowzilla.run<any>('context', [0], {});
   expect(result.join('')).toBe('0123');
 });
@@ -120,8 +120,8 @@ test('depending-with-position2', async () => {
   };
   // skillA['skills'] = ['skillB', skillC];
   // skillA['position'] = 'BEFORE';
-  flowzilla.add([skillA, skillC]);
-  flowzilla.add(skillB, 'AFTER', skillA);
+  flowzilla.addSkill([skillA, skillC]);
+  flowzilla.addSkill(skillB, 'AFTER', skillA);
   const result = await flowzilla.run<any>('context', [0], {});
   expect(result.join('')).toBe('0123');
 });
@@ -139,31 +139,31 @@ test('depending-with-position-bystring', async () => {
   };
   // skillA['skills'] = ['skillB', skillC];
   // skillA['position'] = 'BEFORE';
-  flowzilla.add([skillA, skillC]);
-  flowzilla.add(skillB, 'AFTER', ['skillA']);
+  flowzilla.addSkill([skillA, skillC]);
+  flowzilla.addSkill(skillB, 'AFTER', ['skillA']);
   const result = await flowzilla.run<any>('context', [0], {});
   expect(result.join('')).toBe('0123');
 });
 
 test('edgecase', async () => {
   const flowzilla = createFlowzilla();
-  flowzilla.add('1', (type, value, flow) => {
+  flowzilla.addSkill('1', (type, value, flow) => {
     (flow as any)();
   });
-  flowzilla.add('1', (type, value, flow) => {
+  flowzilla.addSkill('1', (type, value, flow) => {
     (flow as any)();
   });
-  flowzilla.add('2', (type, value, flow) => {
+  flowzilla.addSkill('2', (type, value, flow) => {
     (flow as any)();
   });
-  expect(() => (flowzilla.add as any)()).toThrow();
+  expect(() => (flowzilla.addSkill as any)()).toThrow();
   await flowzilla.run<any>('context', [0]);
   expect(flowzilla.numberOfSkills()).toBe(2);
 });
 
 test('reset', async () => {
   const flowzilla = new Flowzilla();
-  flowzilla.add(async (type, value, flow) => {
+  flowzilla.addSkill(async (type, value, flow) => {
     if (type === 'first') {
       flow.reset('third', 'hel');
     } else if (type === 'second') {
@@ -179,7 +179,7 @@ test('reset', async () => {
       );
     }
   });
-  flowzilla.add(async (type, value, flow) => {
+  flowzilla.addSkill(async (type, value, flow) => {
     const [part, part2] = await Promise.all([
       flow.run('second'),
       flow.run('secondb')
@@ -199,7 +199,7 @@ test('reset', async () => {
 
 test('sync', async () => {
   const flowzilla = new Flowzilla();
-  flowzilla.add((type, value) => {
+  flowzilla.addSkill((type, value) => {
     value.push(1);
     return value;
   });
@@ -210,40 +210,40 @@ test('sync', async () => {
 
 test('remove', async () => {
   const flowzilla = new Flowzilla();
-  flowzilla.add('1', (type, value) => {
+  flowzilla.addSkill('1', (type, value) => {
     value.push(1);
     return value;
   });
   expect(flowzilla.numberOfSkills()).toBe(1);
-  flowzilla.remove('1');
+  flowzilla.removeSkill('1');
   expect(flowzilla.numberOfSkills()).toBe(0);
   function skill1(type: string, value: any) {
     value.push(1);
     return value;
   }
-  flowzilla.add(skill1);
+  flowzilla.addSkill(skill1);
   expect(flowzilla.numberOfSkills()).toBe(1);
-  flowzilla.remove(skill1);
+  flowzilla.removeSkill(skill1);
   expect(flowzilla.numberOfSkills()).toBe(0);
 });
 
 test('hooks', async () => {
   const flowzilla = new Flowzilla();
-  flowzilla.add((type, value, flow) => {
+  flowzilla.addSkill((type, value, flow) => {
     value.push(1);
     flow(
       value,
       (x, flow) => flow([...x, 5])
     );
   });
-  flowzilla.add((type, value, flow) => {
+  flowzilla.addSkill((type, value, flow) => {
     value.push(2);
     flow(
       value,
       (x, flow) => flow([...x, 4])
     );
   });
-  flowzilla.add((type, value, flow) => flow([...value, 3]));
+  flowzilla.addSkill((type, value, flow) => flow([...value, 3]));
   const result = await flowzilla.run<any>('hans', [0]);
   expect(Array.isArray(result)).toBe(true);
   expect(result.length).toBe(6);

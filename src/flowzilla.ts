@@ -37,7 +37,7 @@ export class Flowzilla<T1 = any> {
     options = this.appendTracker(options);
     return dispatch(undefined, this.skills, type, value, options);
   }
-  remove(skill: string | ISkill) {
+  removeSkill(skill: string | ISkill) {
     skill = typeof skill === 'string' ? this.$skillSet[skill] : skill;
     const index = this.skills.indexOf(skill as any);
     if (index >= 0) {
@@ -45,18 +45,18 @@ export class Flowzilla<T1 = any> {
       this.skills.splice(this.skills.indexOf(skill as any), 1);
     }
   }
-  add<T = any>(
+  addSkill<T = any>(
     skill: ISkill<T> | ISkill<T>[],
     position?: IPosition,
     otherSkill?: ISkill<any> | ISkill<T>[] | string | string[]
   ): void;
-  add<T = any>(
+  addSkill<T = any>(
     name: string,
     skill: ISkill<T> | ISkill<T>[],
     position?: IPosition,
     otherSkill?: ISkill<any> | ISkill<T>[] | string | string[]
   ): void;
-  add<T = any>(
+  addSkill<T = any>(
     n: string | ISkill<T> | ISkill<T>[] | undefined,
     s?: ISkill<T> | ISkill<T>[] | IPosition,
     p?: IPosition | ISkill<any> | ISkill<T>[],
@@ -69,8 +69,8 @@ export class Flowzilla<T1 = any> {
     if (Array.isArray(skill)) {
       skill.forEach(skill =>
         typeof n === 'string'
-          ? this.add(n as any, skill as any, p as any, o as any)
-          : this.add(skill as any, s as any, p as any)
+          ? this.addSkill(n as any, skill as any, p as any, o as any)
+          : this.addSkill(skill as any, s as any, p as any)
       );
       return;
     }

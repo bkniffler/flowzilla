@@ -82,7 +82,7 @@ class MemoryDB extends Flowzilla {
   store: any[] = [];
   constructor() {
     super();
-    this.add('persistence', memoryPersistence(this.store));
+    this.addSkill('persistence', memoryPersistence(this.store));
   }
   insert(item: any): Promise<any> {
     return this.run('insert', item);
@@ -102,7 +102,7 @@ test('db-softdelete', async () => {
   const tracked: any[] = [];
   const db = new MemoryDB();
   // Insert skills at start of chain
-  db.add([transform, softDelete], 'START');
+  db.addSkill([transform, softDelete], 'START');
   db.tracker = args => tracked.push(args);
   const item = await db.insert({ name: 'Oskar' });
   await db.remove(item.id);
@@ -118,7 +118,7 @@ test('db-softdelete', async () => {
 
 test('db', async () => {
   const db = new MemoryDB();
-  db.add([transform], 'START');
+  db.addSkill([transform], 'START');
   const item = await db.insert({ name: 'Oskar' });
   await db.remove(item.id);
   const item2 = await db.get(item.id);
