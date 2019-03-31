@@ -49,12 +49,12 @@ await db.remove(item.id);
 
 ## Database code
 
-The database interface is pretty basic. It extends `ServiceDog` class and exposes some methods that are handed to ServiceDog.
+The database interface is pretty basic. It extends `Flowzilla` class and exposes some methods that are handed to Flowzilla.
 
 ```js
-import { ServiceDog, generateID } from 'service-dog';
+import { Flowzilla, generateID } from 'flowzilla';
 
-class MemoryDB extends ServiceDog {
+class MemoryDB extends Flowzilla {
   store = [];
   constructor() {
     super();

@@ -73,7 +73,7 @@ export function dispatch(
         return callback(value);
       }
     }
-    function flowRestart(type: string, value: any, con: any = {}) {
+    function flowReset(type: string, value: any, con: any = {}) {
       return dispatch(
         callback,
         skills,
@@ -88,7 +88,7 @@ export function dispatch(
         id
       );
     }
-    function flowSend<T>(type: string, value: any, con: any = {}) {
+    function flowRun<T>(type: string, value: any, con: any = {}) {
       return new Promise<T>(yay => {
         return dispatch(
           yay,
@@ -118,11 +118,11 @@ export function dispatch(
       value = newValue || value;
       return useSkill(value, i + 1);
     }
-    flow.restart = flowRestart;
+    flow.reset = flowReset;
     flow.return = flowReturn;
     flow.get = getContext;
     flow.set = setContext;
-    flow.send = flowSend;
+    flow.run = flowRun;
     if (options.tracker) {
       options.tracker({
         skill: skillName,

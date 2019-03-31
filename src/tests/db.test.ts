@@ -1,4 +1,4 @@
-import { ServiceDog, ISkill } from '../index';
+import { Flowzilla, ISkill } from '../index';
 import { generateID } from '../utils';
 var Faltu = require('faltu');
 
@@ -39,9 +39,9 @@ const softDelete: ISkill = async (type, value, flow) => {
   // On remove
   if (type === 'remove') {
     // Retrieve item
-    const item = await flow.send('get', value);
+    const item = await flow.run('get', value);
     // Restart with item's 'deleted': true
-    flow.restart('insert', { ...item, deleted: true });
+    flow.reset('insert', { ...item, deleted: true });
   } else if (type === 'all') {
     // Get 'includeDeleted' from options
     const includeDeleted = flow.get('includeDeleted');
@@ -78,23 +78,23 @@ const memoryPersistence = (store: any[]): ISkill => (type, value, flow) => {
   }
 };
 
-class MemoryDB extends ServiceDog {
+class MemoryDB extends Flowzilla {
   store: any[] = [];
   constructor() {
     super();
-    this.skill('persistence', memoryPersistence(this.store));
+    this.add('persistence', memoryPersistence(this.store));
   }
   insert(item: any): Promise<any> {
-    return this.send('insert', item);
+    return this.run('insert', item);
   }
   remove(id: string) {
-    return this.send('remove', id);
+    return this.run('remove', id);
   }
   get(id: string) {
-    return this.send('get', id);
+    return this.run('get', id);
   }
   all(query: any = {}, includeDeleted = false) {
-    return this.send('all', query, { includeDeleted });
+    return this.run('all', query, { includeDeleted });
   }
 }
 
@@ -102,7 +102,7 @@ test('db-softdelete', async () => {
   const tracked: any[] = [];
   const db = new MemoryDB();
   // Insert skills at start of chain
-  db.skill([transform, softDelete], 'START');
+  db.add([transform, softDelete], 'START');
   db.tracker = args => tracked.push(args);
   const item = await db.insert({ name: 'Oskar' });
   await db.remove(item.id);
@@ -118,7 +118,7 @@ test('db-softdelete', async () => {
 
 test('db', async () => {
   const db = new MemoryDB();
-  db.skill([transform], 'START');
+  db.add([transform], 'START');
   const item = await db.insert({ name: 'Oskar' });
   await db.remove(item.id);
   const item2 = await db.get(item.id);

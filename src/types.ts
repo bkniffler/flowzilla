@@ -1,12 +1,12 @@
 export interface IFlow<T> {
-  (value: T, onFlowBack?: INextFlow<T>): void;
-  send: <T>(type: string, value?: T, context?: any) => Promise<T>;
-  restart: (type: string, value?: T, context?: any) => void;
+  (value: T, onFlowBack?: IFlowBack<T>): void;
+  run: <T>(type: string, value?: T, context?: any) => Promise<T>;
+  reset: (type: string, value?: T, context?: any) => void;
   return: (value: T) => void;
   set: (key: string, value: any) => void;
   get: (key: string, defaultValue?: any) => any;
 }
-export type INextFlow<T = any> = (
+export type IFlowBack<T = any> = (
   result: T,
   flow: (value: any) => void
 ) => void;

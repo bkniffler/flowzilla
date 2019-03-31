@@ -5,7 +5,9 @@
     "rootDir": "src",
     "outDir": "lib",
     "module": "esnext",
-    "importHelpers": true
+    "importHelpers": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./node_modules/.cache/typescript"
   },
   "include": ["src"],
   "exclude": ["**/*.test.ts", "**/*.test.tsx", "node_modules"]

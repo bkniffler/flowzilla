@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 import * as Benchmark from 'benchmark';
-import { ServiceDog, generateID } from '../index';
+import { Flowzilla, generateID } from '../index';
 
 if (process.env.BENCHMARK) {
   test('benchmark', async cb => {
@@ -39,17 +39,16 @@ if (process.env.BENCHMARK) {
       value.push(3);
       return new Promise(timeout(value));
     }
-    // DOG
-    const dog = new ServiceDog();
-    dog.skill((type, value, flow) => {
+    const flowzilla = new Flowzilla();
+    flowzilla.add((type, value, flow) => {
       value.push(1);
       flow(value);
     });
-    dog.skill((type, value, flow) => {
+    flowzilla.add((type, value, flow) => {
       value.push(2);
       flow(value);
     });
-    dog.skill((type, value, flow) => {
+    flowzilla.add((type, value, flow) => {
       value.push(3);
       timeout(value)(flow);
     });
@@ -70,9 +69,9 @@ if (process.env.BENCHMARK) {
         { defer: true }
       )
       .add(
-        'service-dog',
+        'flowzilla',
         function(defer: any) {
-          dog.send<any>('hans', [0], {}).then(() => defer.resolve());
+          flowzilla.run<any>('hans', [0], {}).then(() => defer.resolve());
         },
         { defer: true }
       )
@@ -81,8 +80,8 @@ if (process.env.BENCHMARK) {
           console.log(String(i));
           return { ...store, [i.name]: i.hz };
         }, {});
-        const perfScore = (100 / result['promise']) * result['service-dog'];
-        const perfScore2 = (100 / result['callback']) * result['service-dog'];
+        const perfScore = (100 / result['promise']) * result['flowzilla'];
+        const perfScore2 = (100 / result['callback']) * result['flowzilla'];
         console.log('Score', perfScore, perfScore2);
         expect(perfScore).toBeGreaterThan(80);
         expect(perfScore2).toBeGreaterThan(80);
@@ -93,7 +92,7 @@ if (process.env.BENCHMARK) {
   test('benchmark-id', async cb => {
     const suite = new Benchmark.Suite();
     suite
-      .add('dogid', function() {
+      .add('wolfid', function() {
         generateID();
       })
       .add('randstring32', function() {
@@ -106,7 +105,7 @@ if (process.env.BENCHMARK) {
           console.log(String(i));
           return { ...store, [i.name]: i.hz };
         }, {});
-        const perfScore = (100 / result['randstring32']) * result['dogid'];
+        const perfScore = (100 / result['randstring32']) * result['wolfid'];
         console.log('Score', perfScore);
         expect(perfScore).toBeGreaterThan(100);
         cb();

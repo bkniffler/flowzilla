@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - "10"
+  - '10'
 
 sudo: false
 
@@ -10,5 +10,6 @@ install:
   - yarn
 
 script:
-  - BENCHMARK=true yarn test --collect-coverage
+  # - BENCHMARK=true yarn test --collect-coverage
+  - yarn test --collect-coverage
   - yarn coverage

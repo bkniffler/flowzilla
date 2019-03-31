@@ -19,7 +19,7 @@ const calculator = (type, value, flow) => {
 
 ### type
 
-Type is a string that is defined when calling ServiceDog.send.
+Type is a string that is defined when calling Flowzilla.run.
 
 ### value
 
