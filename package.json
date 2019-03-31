@@ -1,6 +1,6 @@
 {
   "name": "flowzilla",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "sideEffects": false,
   "license": "MIT",
   "main": "./lib/index.cjs.js",
@@ -17,10 +17,9 @@
     "build": "run-s build:*",
     "dev": "run-p \"build:* -- --watch\"",
     "build:typedoc": "rimraf docs/typedoc && typedoc --options ./typedoc.js ./src",
-    "build:clean": "rimraf lib",
-    "build:ts": "tsc --build",
+    "build:ts": "tsc",
     "build:rollup": "rollup -c",
-    "clean": "rimraf ./lib ./es",
+    "clean": "rimraf ./lib && rimraf ./node_modules/.cache",
     "p": "yarn test && yarn build && npm publish --registry https://registry.npmjs.org",
     "test": "jest --verbose=false",
     "coverage": "codecov"
