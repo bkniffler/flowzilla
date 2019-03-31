@@ -39,7 +39,32 @@ It can also help you check your flow by providing a tracker that will fire on st
 
 This library works on node and in the browser, has no dependencies except for tslib (no dependencies, 2kb gzipped) and is tree shackable.
 
+## Performance
+
+The overhead of running flowzilla compared to using callbacks or a chain of promises is very low.
+Checkout the (simple) benchmark at: https://github.com/bkniffler/flowzilla/blob/master/src/tests/benchmark.test.ts
+
+```bash
+# Macbook Pro 13
+callback x 761 ops/sec ±1.80% (74 runs sampled)
+promise x 750 ops/sec ±0.99% (76 runs sampled)
+flowzilla x 758 ops/sec ±0.98% (74 runs sampled)
+```
+
+# Table of Contents
+
+- Install
+  - Yarn/NPM
+  - CDN
+  - Sandbox
+- API Documentation
+  - Skill
+- Example
+  - Database Example
+
 ## Install
+
+### Yarn/NPM
 
 ```
 yarn add flowzilla
@@ -53,18 +78,6 @@ A browser version is available on https://cdn.jsdelivr.net/npm/flowzilla
 ### Sandbox
 
 - [CodeSandbox Playground](https://codesandbox.io/s/pp3zwnxk7m)
-
-### Performance
-
-The overhead of running flowzilla compared to using callbacks or a chain of promises is very low.
-Checkout the (simple) benchmark at: https://github.com/bkniffler/flowzilla/blob/master/src/tests/benchmark.test.ts
-
-```bash
-# Macbook Pro 13
-callback x 761 ops/sec ±1.80% (74 runs sampled)
-promise x 750 ops/sec ±0.99% (76 runs sampled)
-flowzilla x 758 ops/sec ±0.98% (74 runs sampled)
-```
 
 # API Documentation
 
