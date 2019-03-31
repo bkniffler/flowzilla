@@ -25,16 +25,15 @@
     "coverage": "codecov"
   },
   "keywords": [
-    "rpc",
-    "service",
-    "proxy",
-    "websocket",
-    "socket",
-    "electron",
-    "ipc",
-    "realtime",
-    "react-native",
-    "react"
+    "express",
+    "redux",
+    "flow",
+    "stream",
+    "async",
+    "transform",
+    "mutate",
+    "mutation",
+    "flux"
   ],
   "author": "Benjamin Kniffler <bkniffler@me.com>",
   "bugs": {

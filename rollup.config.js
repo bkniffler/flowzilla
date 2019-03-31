@@ -7,7 +7,7 @@ export default [
   {
     input: pkg.module,
     output: {
-      name: 'serviceDog',
+      name: 'flowzilla',
       file: pkg.browser,
       format: 'umd'
     },
