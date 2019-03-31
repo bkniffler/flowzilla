@@ -55,3 +55,15 @@ npm i flowzilla
 ### CDN
 
 A browser version is available on https://cdn.jsdelivr.net/npm/flowzilla
+
+### Performance
+
+The overhead of running flowzilla compared to using callbacks or a chain of promises is very low.
+Checkout the (simple) benchmark at: https://github.com/bkniffler/flowzilla/blob/master/src/tests/benchmark.test.ts
+
+```bash
+# Macbook Pro 13
+callback x 761 ops/sec ±1.80% (74 runs sampled)
+promise x 750 ops/sec ±0.99% (76 runs sampled)
+flowzilla x 758 ops/sec ±0.98% (74 runs sampled)
+```
