@@ -264,7 +264,7 @@ The value can be anything, and it can be altered in each skill.
 - `flow(newValue);` will continue to next skill (if any) or return (if none)
 - `flow.return(finalValue);` will force to retur with specified value instead of proceding to next
 - `await flow.run('new-action', value);` will start a new flow and await its value before continuing
-- `flow.restart('new-action', value);` will stop the current flow and start a new one
+- `flow.reset('new-action', value);` will stop the current flow and start a new one
 - `flow.catch((err, previousErrorHandler) => void);` will add an error handler for subsequent flows
 
 # Guides
