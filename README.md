@@ -126,27 +126,25 @@ Add a skill to flowzilla. Read more about skills in the #Skill section. You can 
 
 ```js
 // Add a skill with named function
-flowzilla.addSkill(function firstSkill(type, value, flow) {
+function firstSkill(type, value, flow) {
   flow(value);
-});
+}
+flowzilla.addSkill(firstSkill);
+
+// Simple skill that does nothing
+const simpleSkill = (type, value, flow) => flow(value);
 // Add a skill with name
-flowzilla.addSkill('skill1337', (type, value, flow) => flow(value));
+flowzilla.addSkill('skill1337', skill);
 // Add a skill at start
-flowzilla.addSkill((type, value, flow) => flow(value), 'START');
+flowzilla.addSkill(skill, 'START');
 // Add a skill after firstSkill
-flowzilla.addSkill((type, value, flow) => flow(value), 'AFTER', firstSkill);
+flowzilla.addSkill(skill, 'AFTER', firstSkill);
 // Add a skill before skill1337
-flowzilla.addSkill((type, value, flow) => flow(value), 'BEFORE', 'skill1337');
+flowzilla.addSkill(skill, 'BEFORE', 'skill1337');
 // Add a skill before firstSkill and skill1337
-flowzilla.addSkill((type, value, flow) => flow(value), 'BEFORE', [
-  firstSkill,
-  'skill1337'
-]);
+flowzilla.addSkill(skill, 'BEFORE', [firstSkill, 'skill1337']);
 // Add multiple skills
-flowzilla.addSkill([
-  (type, value, flow) => flow(value),
-  (type, value, flow) => flow(value)
-]);
+flowzilla.addSkill([skill, skill]);
 ```
 
 #### flowzilla.removeSkill
