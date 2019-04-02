@@ -159,7 +159,7 @@ test('edgecase', async () => {
   });
   expect(() => (flowzilla.addSkill as any)()).toThrow();
   await flowzilla.run<any>('context', [0]);
-  expect(flowzilla.numberOfSkills()).toBe(2);
+  expect(flowzilla.skillCount).toBe(2);
 });
 
 test('reset', async () => {

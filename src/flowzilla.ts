@@ -15,7 +15,10 @@ export class Flowzilla<T1 = any> {
   constructor(name = 'chappie') {
     this.name = name;
   }
-  public numberOfSkills() {
+  public get skillsCount() {
+    return this.skills.length;
+  }
+  public get skillCount() {
     return this.skills.length;
   }
   private appendTracker(options: IOptions = {}) {

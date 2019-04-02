@@ -53,14 +53,23 @@ flowzilla x 758 ops/sec ±0.98% (74 runs sampled)
 
 # Table of Contents
 
-- Install
+- [Install](#install)
   - Yarn/NPM
   - CDN
   - Sandbox
-- API Documentation
-  - Skill
-- Example
+- [API Documentation](#api-documentation)
+  - [Flowzilla](#flowzilla)
+  - [Skill](#skill)
+- [Guides](#guides)
+  - Get started
+  - Context
+  - Error handling
+  - Synchronous flow
+  - Inheriting Flowzilla
+- [Examples](#examples)
+  - HTTP Client Example
   - Database Example
+  - Event emitting
 
 ## Install
 
@@ -81,9 +90,110 @@ A browser version is available on https://cdn.jsdelivr.net/npm/flowzilla
 
 # API Documentation
 
+Flowzillas' structure is fairly simple. There is a Flowzilla class, which you add Skill functions to. Then you can run your flows. Read more about all API arguments below.
+
+## Flowzilla
+
+```js
+const flowzilla = new Flowzilla();
+flowzilla.addSkill((type, value, flow) => {
+  if (type === 'append) {
+    value.push(1);
+  }
+  flow(value);
+});
+flowzilla
+  .run('append', [0])
+  .then(result => console.log('Result', result))
+  .catch(err => console.error(err));
+```
+
+### Methods
+
+#### constructor
+
+Initiate a new instance, optionally providing a name.
+
+`const flowzilla = new Flowzilla(name?: string)`
+
+#### flowzilla.addSkill
+
+Add a skill to flowzilla. Read more about skills in the #Skill section. You can control the order of your skills by either adding them in the according order or by providing the position.
+
+`flowzilla.addSkill(skill: Skill): void`
+`flowzilla.addSkill(name: string, skill: Skill): void`
+`flowzilla.addSkill(name: string, skill: Skill, position: 'AFTER'|'BEFORE'|'START'|'END', anchor?: any | any[]): void`
+
+```js
+// Add a skill with named function
+flowzilla.addSkill(function firstSkill(type, value, flow) {
+  flow(value);
+});
+// Add a skill with name
+flowzilla.addSkill('skill1337', (type, value, flow) => flow(value));
+// Add a skill at start
+flowzilla.addSkill((type, value, flow) => flow(value), 'START');
+// Add a skill after firstSkill
+flowzilla.addSkill((type, value, flow) => flow(value), 'AFTER', firstSkill);
+// Add a skill before skill1337
+flowzilla.addSkill((type, value, flow) => flow(value), 'BEFORE', 'skill1337');
+// Add a skill before firstSkill and skill1337
+flowzilla.addSkill((type, value, flow) => flow(value), 'BEFORE', [
+  firstSkill,
+  'skill1337'
+]);
+// Add multiple skills
+flowzilla.addSkill([
+  (type, value, flow) => flow(value),
+  (type, value, flow) => flow(value)
+]);
+```
+
+#### flowzilla.removeSkill
+
+Remove a skill from flowzilla, either by name or by the function.
+
+`flowzilla.removeSkill(skill: Skill | string): void`
+
+#### flowzilla.skill(s)Count
+
+Number of skills currently in flowzilla instance.
+
+`flowzilla.skill(s)Count: number`
+
+#### flowzilla.run
+
+Dispatch an action into flowzilla, optionally providing an initialValue and a context.
+
+`flowzilla.run<T>(type: string, initialValue?: any, context?: any): Promise<T>`
+
+```js
+flowzilla
+  .run('fetch', { id: '123' }, { accessToken: 'BEARER 123' })
+  .then(result => console.log('Result', result))
+  .catch(err => console.error(err));
+```
+
+#### flowzilla.runSync
+
+Dispatch an action into flowzilla, optionally providing an initialValue and a context. Will return whatever first skill returns. Handy for adding change-listeners.
+
+`flowzilla.runSync<T>(type: string, initialValue: any, context: any): Promise<T>`
+
+```js
+flowzilla.addSkill(function calc(type, value, flow) {
+  if (type === 'multiply) {
+    return value.reduce((sum, n) => sum * n, 1);
+  }
+});
+const value = flowzilla.runSync('multiply', [2, 2]); // => 4;
+```
+
 ## Skill
 
-### Example
+A skill is only just a function
+
+`(type: string, value: any, flow: Flow): void`
 
 ```js
 const calculator = (type, value, flow) => {
@@ -110,182 +220,14 @@ The value can be anything, and it can be altered in each skill.
 
 #### flow
 
-`flow` exposes multiple functions to control your data flow.
+`flow` exposes multiple functions to control your data flow, read more in the section below.
 
-```js
-flow(newValue); // will continue to next skill (if any) or return (if none)
-flow.return(finalValue); // will force to retur with specified value instead of proceding to next
-await flow.send('new-action', value); // will start a new flow and await its value before continuing
-flow.restart('new-action', value); // will stop the current flow and start a new one
-```
+### Flow
+
+- `flow(newValue);` will continue to next skill (if any) or return (if none)
+- `flow.return(finalValue);` will force to retur with specified value instead of proceding to next
+- `await flow.run('new-action', value);` will start a new flow and await its value before continuing
+- `flow.restart('new-action', value);` will stop the current flow and start a new one
+- `flow.catch((err, previousErrorHandler) => void);` will add an error handler for subsequent flows
 
 # Examples
-
-## Database Example
-
-### Introduction
-
-Implement a simple memory database using [faltu](https://github.com/moinism/faltu) to filter arrays with a mongo query like syntax. There is optional plugins for soft-delete and adding `lastChange` timestamp. The data layer could be easily switched to `localStorage`, `mongodb`, `http`, `socketio`, whatever you want.
-
-The code can be seen here: https://codesandbox.io/s/r46m7pz35m
-
-### Demo
-
-This is what the database interface will look like.
-
-```js
-// ********************
-// With transform plugin
-// ********************
-const db = new MemoryDB();
-db.skill([transform], 'START');
-const item = await db.insert({ name: 'Oskar' });
-await db.remove(item.id);
-
-// ********************
-// With transform + softDelete plugin
-// ********************
-// const tracked[] = [];
-const db = new MemoryDB();
-// Insert skills at start of chain
-db.skill([transform, softDelete], 'START');
-// db.tracker = args => (console.log(args) as any) || tracked.push(args);
-const item = await db.insert({ name: 'Oskar' });
-await db.remove(item.id);
-// Get a single item by id, also if deleted
-await db.get(item.id); // { name: 'Oskar', id: ... }
-// Fetch all
-const all = await db.all(); // returns []
-// Fetch including deleted
-const all2 = await db.all({}, true); // returns [{ name: 'Oskar', id: ... }]
-// console.log(treeizeTracker(tracked));
-
-// ********************
-// With tracking
-// ********************
-const db = new MemoryDB();
-db.skill([transform, softDelete], 'START');
-db.tracker = args => console.log(args);
-const item = await db.insert({ name: 'Oskar' });
-await db.remove(item.id);
-```
-
-### Database code
-
-The database interface is pretty basic. It extends `Flowzilla` class and exposes some methods that are handed to Flowzilla.
-
-```js
-import { Flowzilla, generateID } from 'flowzilla';
-
-class MemoryDB extends Flowzilla {
-  store = [];
-  constructor() {
-    super();
-    // Only add the basic memory persistence skill, everything else is optional
-    this.skill('persistence', memoryPersistence(this.store));
-  }
-  insert(item) {
-    return this.send('insert', item);
-  }
-  remove(id) {
-    return this.send('remove', id);
-  }
-  get(id) {
-    return this.send('get', id);
-  }
-  all(query = {}, includeDeleted = false) {
-    return this.send('all', query, { includeDeleted });
-  }
-}
-```
-
-### Skills
-
-#### Memory persistence
-
-```js
-const Faltu = require('faltu');
-const memoryPersistence = store => (type, value, flow) => {
-  // Handle insert and return item
-  if (type === 'insert') {
-    if (!value.id) {
-      value.id = generateID();
-      store.push(value);
-    } else {
-      const index = store.findIndex(x => x.id === value.id);
-      store[index] = value;
-    }
-    flow.return({ ...value });
-  } else if (type === 'all') {
-    // Perform query and return items
-    flow.return(new Faltu(store).find(value).get());
-  } else if (type === 'get') {
-    // Perform query and return single item
-    flow.return(store.find(x => x.id === value));
-  } else if (type === 'remove') {
-    // Remove by id and return id
-    const index = store.findIndex(x => x.id === value);
-    store.splice(index, 1);
-    flow.return(value);
-  }
-};
-```
-
-#### SoftDelete
-
-```js
-// Transform 'remove' operation to 'insert' and set 'deleted': true
-const softDelete = async (type, value, flow) => {
-  // On remove
-  if (type === 'remove') {
-    // Retrieve item
-    const item = await flow.send('get', value);
-    // Restart with item's 'deleted': true
-    flow.restart('insert', { ...item, deleted: true });
-  } else if (type === 'all') {
-    // Get 'includeDeleted' from options
-    const includeDeleted = flow.get('includeDeleted');
-    // Overwrite query depending on 'includeDeleted': true
-    flow(includeDeleted ? { ...value } : { ...value, deleted: { $ne: true } });
-  } else {
-    // Do nuffin'
-    flow(value);
-  }
-};
-```
-
-#### TimeStamp
-
-```js
-// Add a timestamp for storage, remove timestamp on retrieve
-const transform = (type, value, flow) => {
-  function clean(i) {
-    delete i.lastChanged;
-    return i;
-  }
-  if (type === 'insert') {
-    flow(
-      // Add timestamp
-      { ...value, lastChanged: +new Date() },
-      // On return, remove timestamp
-      (i, n) => n(clean(i))
-    );
-  } else if (type === 'all' || type === 'get') {
-    flow(
-      // Leave untouched
-      value,
-      // On return, remove timestamp of all/one
-      (value, flow) => {
-        if (type === 'get') {
-          flow(value ? clean(value) : value);
-        } else {
-          flow(value.map(clean));
-        }
-      }
-    );
-  } else {
-    // Do nothing
-    flow(value);
-  }
-};
-```
