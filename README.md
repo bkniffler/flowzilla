@@ -261,11 +261,13 @@ The value can be anything, and it can be altered in each skill.
 
 ### Flow
 
-- `flow(newValue);` will continue to next skill (if any) or return (if none)
-- `flow.return(finalValue);` will force to retur with specified value instead of proceding to next
-- `await flow.run('new-action', value);` will start a new flow and await its value before continuing
-- `flow.reset('new-action', value);` will stop the current flow and start a new one
-- `flow.catch((err, previousErrorHandler) => void);` will add an error handler for subsequent flows
+- `flow(newValue)` will continue to next skill (if any) or return (if none)
+- `flow.return(finalValue)` will force to return with specified value instead of proceeding to next
+- `flow.run('new-action', value): Promise` will start a new flow and await its value before continuing
+- `flow.reset('new-action', value)` will stop the current flow and start a new one
+- `flow.catch((err, previousErrorHandler) => void)` will add an error handler for subsequent flows
+- `flow.get('key', defaultValue)` get value from context
+- `flow.set('key', value)` set value in context
 
 # Guides
 
