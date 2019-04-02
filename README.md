@@ -134,17 +134,17 @@ flowzilla.addSkill(firstSkill);
 // Simple skill that does nothing
 const simpleSkill = (type, value, flow) => flow(value);
 // Add a skill with name
-flowzilla.addSkill('skill1337', skill);
+flowzilla.addSkill('skill1337', simpleSkill);
 // Add a skill at start
-flowzilla.addSkill(skill, 'START');
+flowzilla.addSkill(simpleSkill, 'START');
 // Add a skill after firstSkill
-flowzilla.addSkill(skill, 'AFTER', firstSkill);
+flowzilla.addSkill(simpleSkill, 'AFTER', firstSkill);
 // Add a skill before skill1337
-flowzilla.addSkill(skill, 'BEFORE', 'skill1337');
+flowzilla.addSkill(simpleSkill, 'BEFORE', 'skill1337');
 // Add a skill before firstSkill and skill1337
-flowzilla.addSkill(skill, 'BEFORE', [firstSkill, 'skill1337']);
+flowzilla.addSkill(simpleSkill, 'BEFORE', [firstSkill, 'skill1337']);
 // Add multiple skills
-flowzilla.addSkill([skill, skill]);
+flowzilla.addSkill([simpleSkill, simpleSkill]);
 ```
 
 #### flowzilla.removeSkill
