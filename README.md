@@ -25,6 +25,9 @@
   <a href="https://github.com/bkniffler/flowzilla">
     <img src="https://flat.badgen.net/bundlephobia/minzip/flowzilla" alt="License">
   </a>
+  <a href="https://github.com/bkniffler/flowzilla">
+    <img src="https://img.shields.io/david/bkniffler/flowzilla.svg?style=flat-square" alt="Dependencies">
+  </a>
   <br />
   <br />
 </div>

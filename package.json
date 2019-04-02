@@ -1,6 +1,6 @@
 {
   "name": "flowzilla",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "sideEffects": false,
   "license": "MIT",
   "main": "./lib/index.cjs.js",
