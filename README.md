@@ -97,7 +97,7 @@ Flowzillas' structure is fairly simple. There is a Flowzilla class, which you ad
 ```js
 const flowzilla = new Flowzilla();
 flowzilla.addSkill((type, value, flow) => {
-  if (type === 'append) {
+  if (type === 'append') {
     value.push(1);
   }
   flow(value);
