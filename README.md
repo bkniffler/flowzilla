@@ -273,7 +273,7 @@ The value can be anything, and it can be altered in each skill.
 
 ## Context
 
-You can get and set context inside of skills using `flow.set(key: string, value: any)` and `flow.get(key: string, defaultValue?: any)`
+You can get and set context inside of skills using `flow.set(key: string, value: any)` and `flow.get(key: string, defaultValue?: any)`.
 Check below for an example.
 
 ## Error Handling
