@@ -39,36 +39,46 @@ It can also help you check your flow by providing a tracker that will fire on st
 
 This library works on node and in the browser, has no dependencies except for tslib (no dependencies, 2kb gzipped) and is tree shackable.
 
-# CodePen example
+## Get started
 
-- [Codepen Playground](https://codepen.io/bkniffler/pen/eoNRWo?editors=0012)
+https://codepen.io/bkniffler/pen/eoNRWo?editors=0012
 
 ```js
 const { Flowzilla } = flowzilla;
 
+// Declare the retry skill
 function retrySkill(type, value, flow) {
+  // Get retries from context
   const currentRetries = flow.get('retries', 0);
+  // Compare with maxRetries from context
   if (currentRetries < flow.get('maxRetries', 0)) {
     // Call reset on fail, providing the current retries as new context
     flow.catch(err => flow.reset(type, value, { retries: currentRetries + 1 }));
   }
+  // Continue normally
   flow(value);
 }
 
+// Declare the fetch skill
 async function fetchSkill(type, value, flow) {
+  // Check current type
   if (type === 'fetch') {
+    // Fetch using browser' fetch & return the json response
     flow.return(await fetch(value).then(response => response.json()));
   } else {
     flow(value);
   }
 }
 
+// Define your own class, inheriting Flowzilla to define your own methods
 class MyHTTPClient extends Flowzilla {
   constructor() {
     super();
+    // Add both skills from above
     this.addSkill('retry', retrySkill);
     this.addSkill('fetch', fetchSkill);
   }
+  // Define a fetch method that calls flowzilla.run with 'fetch' action type, a url and maxRetries as context
   fetch(url) {
     return this.run('fetch', url, {
       maxRetries: 3
@@ -76,6 +86,7 @@ class MyHTTPClient extends Flowzilla {
   }
 }
 
+// Try it!
 async function work() {
   const client = new MyHTTPClient();
   console.log(
@@ -95,7 +106,6 @@ work();
   - [Flowzilla](#flowzilla)
   - [Skill](#skill)
 - [Guides](#guides)
-  - [Get started](#get-started)
   - [Context](#context)
   - [Error Handling](#error-handling)
 - [Examples](#examples)
@@ -258,22 +268,6 @@ The value can be anything, and it can be altered in each skill.
 - `flow.catch((err, previousErrorHandler) => void);` will add an error handler for subsequent flows
 
 # Guides
-
-## Get started
-
-```js
-const flowzilla = new Flowzilla();
-flowzilla.addSkill((type, value, flow) => {
-  if (type === 'append') {
-    value.push(1);
-  }
-  flow(value);
-});
-flowzilla
-  .run('append', [0])
-  .then(result => console.log('Result', result))
-  .catch(err => console.error(err));
-```
 
 ## Context
 
