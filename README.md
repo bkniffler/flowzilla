@@ -39,16 +39,51 @@ It can also help you check your flow by providing a tracker that will fire on st
 
 This library works on node and in the browser, has no dependencies except for tslib (no dependencies, 2kb gzipped) and is tree shackable.
 
-## Performance
+# CodePen example
 
-The overhead of running flowzilla compared to using callbacks or a chain of promises is very low.
-Checkout the (simple) benchmark at: https://github.com/bkniffler/flowzilla/blob/master/src/tests/benchmark.test.ts
+- [Codepen Playground](https://codepen.io/bkniffler/pen/eoNRWo?editors=0012)
 
-```bash
-# Macbook Pro 13
-callback x 761 ops/sec ±1.80% (74 runs sampled)
-promise x 750 ops/sec ±0.99% (76 runs sampled)
-flowzilla x 758 ops/sec ±0.98% (74 runs sampled)
+```js
+const { Flowzilla } = flowzilla;
+
+function retrySkill(type, value, flow) {
+  const currentRetries = flow.get('retries', 0);
+  if (currentRetries < flow.get('maxRetries', 0)) {
+    // Call reset on fail, providing the current retries as new context
+    flow.catch(err => flow.reset(type, value, { retries: currentRetries + 1 }));
+  }
+  flow(value);
+}
+
+async function fetchSkill(type, value, flow) {
+  if (type === 'fetch') {
+    flow.return(await fetch(value).then(response => response.json()));
+  } else {
+    flow(value);
+  }
+}
+
+class MyHTTPClient extends Flowzilla {
+  constructor() {
+    super();
+    this.addSkill('retry', retrySkill);
+    this.addSkill('fetch', fetchSkill);
+  }
+  fetch(url) {
+    return this.run('fetch', url, {
+      maxRetries: 3
+    });
+  }
+}
+
+async function work() {
+  const client = new MyHTTPClient();
+  console.log(
+    await client.fetch('https://jsonplaceholder.typicode.com/todos/1')
+  );
+}
+
+work();
 ```
 
 # Table of Contents
@@ -56,20 +91,18 @@ flowzilla x 758 ops/sec ±0.98% (74 runs sampled)
 - [Install](#install)
   - Yarn/NPM
   - CDN
-  - Sandbox
 - [API Documentation](#api-documentation)
   - [Flowzilla](#flowzilla)
   - [Skill](#skill)
 - [Guides](#guides)
-  - Get started
-  - Context
-  - Error handling
-  - Synchronous flow
-  - Inheriting Flowzilla
+  - [Get started](#get-started)
+  - [Context](#context)
+  - [Error Handling](#error-handling)
 - [Examples](#examples)
-  - HTTP Client Example
+  - [HTTP Client](#http-client)
   - Database Example
   - Event emitting
+- [Performance](#performance)
 
 ## Install
 
@@ -83,10 +116,6 @@ npm i flowzilla
 ### CDN
 
 A browser version is available on https://cdn.jsdelivr.net/npm/flowzilla
-
-### Sandbox
-
-- [CodeSandbox Playground](https://codesandbox.io/s/pp3zwnxk7m)
 
 # API Documentation
 
@@ -228,4 +257,87 @@ The value can be anything, and it can be altered in each skill.
 - `flow.restart('new-action', value);` will stop the current flow and start a new one
 - `flow.catch((err, previousErrorHandler) => void);` will add an error handler for subsequent flows
 
+# Guides
+
+## Get started
+
+```js
+const flowzilla = new Flowzilla();
+flowzilla.addSkill((type, value, flow) => {
+  if (type === 'append') {
+    value.push(1);
+  }
+  flow(value);
+});
+flowzilla
+  .run('append', [0])
+  .then(result => console.log('Result', result))
+  .catch(err => console.error(err));
+```
+
+## Context
+
+You can get and set context inside of skills using `flow.set(key: string, value: any)` and `flow.get(key: string, defaultValue?: any)`
+Check below for an example.
+
+## Error Handling
+
+You can catch any errors by using `flowzilla.run(...).catch(err => void)`, but you can also catch subsequent skills from inside a skill using `flow.catch((err, previousErrorHandler) => void)`.
+
+Here is a simple retry mechanism using error handlers and context.
+
+```js
+const flowzilla = new Flowzilla();
+flowzilla.addSkill('retry', (type, value, flow) => {
+  const maxRetries = flow.get('maxRetries', 0);
+  const currentRetries = flow.get('retries', maxRetries);
+  if (currentRetries < 3) {
+    // Call reset on fail, providing the current retries as new context
+    flow.catch(err => flow.reset(type, value, { retries: currentRetries + 1 }));
+  }
+  flow(value);
+});
+flowzilla.addSkill('error', async (type, value, flow) => {
+  if (type === 'fetch') {
+    flow.return(await fetch(value).then(response => response.json()));
+  }
+});
+flowzilla
+  // Provide context
+  .run('fetch', 'https://jsonplaceholder.typicode.com/todos/1', {
+    maxRetries: 3
+  })
+  .then(result => console.log('Result', result))
+  .catch(err => console.error(err));
+```
+
 # Examples
+
+## HTTP Client
+
+```js
+const flowzilla = new Flowzilla();
+flowzilla.addSkill((type, value, flow) => {
+  if (type === 'divide') {
+    const
+    value.push(1);
+  }
+  flow(value);
+});
+flowzilla
+  .run('divide', [3, 2], { round: true })
+  .then(result => console.log('Result', result))
+  .catch(err => console.error(err));
+```
+
+# Performance
+
+The overhead of running flowzilla compared to using callbacks or a chain of promises is very low.
+Checkout the (simple) benchmark at: https://github.com/bkniffler/flowzilla/blob/master/src/tests/benchmark.test.ts
+
+```bash
+# Macbook Pro 13
+callback x 761 ops/sec ±1.80% (74 runs sampled)
+promise x 750 ops/sec ±0.99% (76 runs sampled)
+flowzilla x 758 ops/sec ±0.98% (74 runs sampled)
+```

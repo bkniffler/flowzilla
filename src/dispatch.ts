@@ -86,7 +86,7 @@ export function dispatch(
     }
     function flowReset(type: string, value: any, con: any = {}) {
       return dispatch(
-        callback,
+        callbacks,
         skills,
         type,
         value,
@@ -156,11 +156,20 @@ export function dispatch(
       });
     }
     try {
+      let result: any;
       if (options[STATUS] === RETURN) {
-        return (skill as any)(value, flow);
+        result = (skill as any)(value, flow);
       } else {
-        return skill(type, value, flow);
+        result = skill(type, value, flow);
       }
+      if (result && result.then && result.catch) {
+        result.catch((err: any) => {
+          if (callback) {
+            return callback(err);
+          }
+        });
+      }
+      return result;
     } catch (err) {
       if (callback) {
         return callback(err);

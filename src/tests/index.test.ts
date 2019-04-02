@@ -5,6 +5,7 @@ import {
   treeizeTracker,
   ISkill
 } from '../index';
+const fetch = require('node-fetch');
 
 test('basic', async () => {
   const flowzilla = new Flowzilla();
@@ -215,17 +216,17 @@ test('remove', async () => {
     value.push(1);
     return value;
   });
-  expect(flowzilla.numberOfSkills()).toBe(1);
+  expect(flowzilla.skillCount).toBe(1);
   flowzilla.removeSkill('1');
-  expect(flowzilla.numberOfSkills()).toBe(0);
+  expect(flowzilla.skillCount).toBe(0);
   function skill1(type: string, value: any) {
     value.push(1);
     return value;
   }
   flowzilla.addSkill(skill1);
-  expect(flowzilla.numberOfSkills()).toBe(1);
+  expect(flowzilla.skillCount).toBe(1);
   flowzilla.removeSkill(skill1);
-  expect(flowzilla.numberOfSkills()).toBe(0);
+  expect(flowzilla.skillCount).toBe(0);
 });
 
 test('hooks', async () => {
@@ -276,4 +277,42 @@ test('error', async () => {
   expect(v).toBe('hello');
   expect(v2).toBe('hans3');
   expect(() => flowzilla.runSync('hans')).toThrow();
+});
+
+test('fetch', async () => {
+  const flowzilla = new Flowzilla();
+  let err: any = undefined;
+  let retries = 0;
+  flowzilla.addSkill('retry', (type, value, flow) => {
+    const maxRetries = flow.get('maxRetries', 0);
+    const currentRetries = flow.get('retries', 0);
+    if (currentRetries < maxRetries) {
+      retries += 1;
+      // Call reset on fail, providing the current retries as new context
+      flow.catch(err =>
+        flow.reset(type, value, { retries: currentRetries + 1 })
+      );
+    }
+    flow(value);
+  });
+  flowzilla.addSkill('error', async (type, value, flow) => {
+    if (type === 'fetch') {
+      flow.return(await fetch(value).then((response: any) => response.json()));
+    } else {
+      flow(value);
+    }
+  });
+  await flowzilla
+    // Provide context
+    .run('fetch', 'https://invalidurl.com', {
+      maxRetries: 3
+    })
+    .catch((e: any) => (err = e));
+  expect(retries).toBe(3);
+  expect(err).toBeTruthy();
+  const result1 = await flowzilla.run(
+    'fetch',
+    'https://jsonplaceholder.typicode.com/todos/1'
+  );
+  expect(result1).toBeTruthy();
 });
