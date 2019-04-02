@@ -209,7 +209,7 @@ Dispatch an action into flowzilla, optionally providing an initialValue and a co
 
 ```js
 flowzilla.addSkill(function calc(type, value, flow) {
-  if (type === 'multiply) {
+  if (type === 'multiply') {
     return value.reduce((sum, n) => sum * n, 1);
   }
 });
@@ -315,20 +315,7 @@ flowzilla
 
 ## HTTP Client
 
-```js
-const flowzilla = new Flowzilla();
-flowzilla.addSkill((type, value, flow) => {
-  if (type === 'divide') {
-    const
-    value.push(1);
-  }
-  flow(value);
-});
-flowzilla
-  .run('divide', [3, 2], { round: true })
-  .then(result => console.log('Result', result))
-  .catch(err => console.error(err));
-```
+Checkout [Codepen Playground](https://codepen.io/bkniffler/pen/eoNRWo?editors=0012)
 
 # Performance
 
