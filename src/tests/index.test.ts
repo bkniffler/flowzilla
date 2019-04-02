@@ -51,8 +51,9 @@ test('callback', cb => {
   flowzilla.addSkill((type, value, flow) => {
     flow(value);
   });
-  flowzilla.run<any>('context', [0], {}, (result: any) => {
-    expect(result[0]).toBe(0);
+  flowzilla.run<any>('context', [0], {}, (err?: any, result?: any) => {
+    expect(err).toBeFalsy();
+    expect(result && result[0]).toBe(0);
     cb();
   });
 });
@@ -248,4 +249,31 @@ test('hooks', async () => {
   expect(Array.isArray(result)).toBe(true);
   expect(result.length).toBe(6);
   expect(result.join('')).toBe('012345');
+});
+
+test('error', async () => {
+  const flowzilla = new Flowzilla();
+  flowzilla.addSkill((type, value, flow) => {
+    if (type !== 'hans') {
+      flow.catch((err, next) => {
+        next(undefined, 'hello');
+      });
+    }
+    flow(value);
+  });
+  flowzilla.addSkill((type, value, flow) => {
+    if (type === 'hans3') {
+      return flow('hans3');
+    }
+    throw new Error('Error :(');
+  });
+
+  let err: any;
+  await flowzilla.run<any>('hans', [0]).catch((er: any) => (err = er));
+  const v = await flowzilla.run<any>('hans2', [0]);
+  const v2 = await flowzilla.run<any>('hans3', [0]);
+  expect(err).toBeTruthy();
+  expect(v).toBe('hello');
+  expect(v2).toBe('hans3');
+  expect(() => flowzilla.runSync('hans')).toThrow();
 });

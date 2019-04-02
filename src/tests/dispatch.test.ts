@@ -2,7 +2,8 @@ import { dispatch } from '../index';
 
 test('dispatch', async cb => {
   dispatch(
-    (result: any) => {
+    (err?: any, result?: any) => {
+      expect(err).toBeFalsy();
       expect(result.length).toBe(2);
       expect(result.join('')).toBe('12');
       cb();

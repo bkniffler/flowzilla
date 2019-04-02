@@ -1,6 +1,6 @@
 import { insertToArray } from './utils';
 import { NAME, POSITION } from './constants';
-import { ISkill, IOptions, IPosition, ITracker } from './types';
+import { ISkill, IOptions, IPosition, ITracker, ICallbacks } from './types';
 import { dispatch } from './dispatch';
 
 export function createFlowzilla<T1 = any>(name?: string) {
@@ -24,13 +24,13 @@ export class Flowzilla<T1 = any> {
     }
     return options;
   }
-  run<T>(type: string, value?: T1, options?: IOptions, callback?: any) {
+  run<T>(type: string, value?: T1, options?: IOptions, callback?: ICallbacks) {
     options = this.appendTracker(options);
     if (callback) {
       return dispatch(callback, this.skills, type, value, options);
     }
-    return new Promise<T>(yay => {
-      return dispatch(yay, this.skills, type, value, options);
+    return new Promise<T>((yay, nay) => {
+      return dispatch([nay, yay], this.skills, type, value, options);
     });
   }
   runSync(type: string, value?: T1, options?: IOptions) {

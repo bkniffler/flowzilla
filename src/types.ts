@@ -5,6 +5,10 @@ export interface IFlow<T> {
   return: (value: T) => void;
   set: (key: string, value: any) => void;
   get: (key: string, defaultValue?: any) => any;
+  catch: (handler: IIntermediateErrorHandler) => any;
+}
+export interface IIntermediateErrorHandler {
+  (err: any, orginalCallback: ICallback): void;
 }
 export type IFlowBack<T = any> = (
   result: T,
@@ -24,4 +28,15 @@ export type IPosition = 'START' | 'BEFORE' | 'AFTER' | 'END';
 export interface IOptions {
   tracker?: ITracker;
   [s: string]: any;
+}
+export interface ICallback {
+  (err: any): void;
+  (err: undefined, result: any): void;
+}
+export type ICallbacks = ICallback | [IErrorCallback, ISuccessCallback];
+export interface ISuccessCallback {
+  (result: any): void;
+}
+export interface IErrorCallback {
+  (err: any): void;
 }

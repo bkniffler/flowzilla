@@ -1,9 +1,15 @@
-import { ISkill, IOptions, IFlow } from './types';
+import {
+  ISkill,
+  IOptions,
+  IFlow,
+  ICallbacks,
+  IIntermediateErrorHandler
+} from './types';
 import { generateID } from './utils';
 import { STATUS, RETURN, START, COMPLETED, NAME } from './constants';
 
 export function dispatch(
-  callback: Function | undefined,
+  callbacks: ICallbacks | undefined,
   skills: ISkill<any>[],
   type: string,
   value: any,
@@ -11,6 +17,11 @@ export function dispatch(
   parents: (string | number)[] = [],
   id?: string
 ) {
+  let callback =
+    !callbacks || !Array.isArray(callbacks)
+      ? callbacks
+      : (err?: any, result?: any) =>
+          err ? callbacks[0](err) : callbacks[1](result);
   let nextFlows: IFlow<any>[] = [];
   const context = { ...options };
   function setContext(key: string, value: any) {
@@ -70,7 +81,7 @@ export function dispatch(
             parents
           });
         }
-        return callback(value);
+        return callback(undefined, value);
       }
     }
     function flowReset(type: string, value: any, con: any = {}) {
@@ -89,9 +100,9 @@ export function dispatch(
       );
     }
     function flowRun<T>(type: string, value: any, con: any = {}) {
-      return new Promise<T>(yay => {
+      return new Promise<T>((yay, nay) => {
         return dispatch(
-          yay,
+          [nay, yay],
           skills,
           type,
           value,
@@ -105,6 +116,16 @@ export function dispatch(
             : []
         );
       });
+    }
+    function flowCatch(errorHandler: IIntermediateErrorHandler) {
+      const originalCallback = callback || ((() => {}) as any);
+      callback = function newCallback(err?: any, value?: any) {
+        if (err) {
+          errorHandler(err, originalCallback);
+        } else if (callback) {
+          originalCallback(err, value);
+        }
+      };
     }
     if (!skill) {
       return flowReturn(value);
@@ -123,6 +144,7 @@ export function dispatch(
     flow.get = getContext;
     flow.set = setContext;
     flow.run = flowRun;
+    flow.catch = flowCatch;
     if (options.tracker) {
       options.tracker({
         skill: skillName,
@@ -133,10 +155,17 @@ export function dispatch(
         parents
       });
     }
-    if (options[STATUS] === RETURN) {
-      return (skill as any)(value, flow);
-    } else {
-      return skill(type, value, flow);
+    try {
+      if (options[STATUS] === RETURN) {
+        return (skill as any)(value, flow);
+      } else {
+        return skill(type, value, flow);
+      }
+    } catch (err) {
+      if (callback) {
+        return callback(err);
+      }
+      throw err;
     }
   }
   return useSkill(value);
