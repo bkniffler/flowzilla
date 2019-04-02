@@ -114,15 +114,15 @@ flowzilla
 
 Initiate a new instance, optionally providing a name.
 
-`const flowzilla = new Flowzilla(name?: string)`
+- `const flowzilla = new Flowzilla(name?: string)`
 
 #### flowzilla.addSkill
 
 Add a skill to flowzilla. Read more about skills in the #Skill section. You can control the order of your skills by either adding them in the according order or by providing the position.
 
-`flowzilla.addSkill(skill: Skill): void`
-`flowzilla.addSkill(name: string, skill: Skill): void`
-`flowzilla.addSkill(name: string, skill: Skill, position: 'AFTER'|'BEFORE'|'START'|'END', anchor?: any | any[]): void`
+- `flowzilla.addSkill(skill: Skill): void`
+- `flowzilla.addSkill(name: string, skill: Skill): void`
+- `flowzilla.addSkill(name: string, skill: Skill, position: 'AFTER'|'BEFORE'|'START'|'END', anchor?: any | any[]): void`
 
 ```js
 // Add a skill with named function
@@ -153,19 +153,19 @@ flowzilla.addSkill([
 
 Remove a skill from flowzilla, either by name or by the function.
 
-`flowzilla.removeSkill(skill: Skill | string): void`
+- `flowzilla.removeSkill(skill: Skill | string): void`
 
 #### flowzilla.skill(s)Count
 
 Number of skills currently in flowzilla instance.
 
-`flowzilla.skill(s)Count: number`
+- `flowzilla.skill(s)Count: number`
 
 #### flowzilla.run
 
 Dispatch an action into flowzilla, optionally providing an initialValue and a context.
 
-`flowzilla.run<T>(type: string, initialValue?: any, context?: any): Promise<T>`
+- `flowzilla.run<T>(type: string, initialValue?: any, context?: any): Promise<T>`
 
 ```js
 flowzilla
@@ -178,7 +178,7 @@ flowzilla
 
 Dispatch an action into flowzilla, optionally providing an initialValue and a context. Will return whatever first skill returns. Handy for adding change-listeners.
 
-`flowzilla.runSync<T>(type: string, initialValue: any, context: any): Promise<T>`
+- `flowzilla.runSync<T>(type: string, initialValue: any, context: any): Promise<T>`
 
 ```js
 flowzilla.addSkill(function calc(type, value, flow) {
@@ -193,7 +193,7 @@ const value = flowzilla.runSync('multiply', [2, 2]); // => 4;
 
 A skill is only just a function
 
-`(type: string, value: any, flow: Flow): void`
+- `(type: string, value: any, flow: Flow): void`
 
 ```js
 const calculator = (type, value, flow) => {
